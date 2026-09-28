@@ -1,99 +1,120 @@
-# GameForge Studio 🎮✨
+# DevPortals 🚀
 
-**L'atelier IA pour concevoir ton jeu vidéo.** Tu notes tes idées, l'agent te répond, propose des pistes et t'aide à bâtir ton jeu : GDD, histoire, personnages, véhicules, lieux, direction artistique, critique franche de tes captures d'écran et génération d'images.
+**Le studio pour concevoir ton jeu vidéo… et le partager avec tes joueurs.**
+Idées, Game Design Document, histoire, personnages, véhicules, lieux, cartes, musique, direction artistique, production, bugs, playtests — et un **portail web hébergé sur ton PC** où les joueurs voient tout ce qui a été ajouté.
 
 > 🇫🇷 Français par défaut · 🇬🇧 English available (bouton **FR / EN** en bas à gauche)
+> Aucune installation, aucune IA, aucun compte : tout reste sur ton ordinateur.
 
 ---
 
-## 🚀 Démarrage (aucune installation)
+## 🚀 Démarrage
 
 | Système | Comment lancer |
 |---|---|
-| **Windows** | Double-clique sur **`GameForge.bat`** |
-| **macOS / Linux** | Lance `./lancer.sh` (ou double-clique sur `index.html`) |
-| **N'importe où** | Ouvre `index.html` dans Chrome, Edge ou Firefox |
+| **Windows** | Double-clique sur **`DevPortals.bat`** |
+| **macOS / Linux** | Lance `./lancer.sh` (nécessite Python 3) |
 
-L'app fonctionne **immédiatement en mode gratuit** (sans clé) : l'agent répond et les images se génèrent via Pollinations. Pour une qualité bien supérieure et la critique de captures, ajoute une clé API dans **Paramètres**.
+Le lanceur démarre un **petit serveur local** et ouvre le studio dans ton navigateur (`http://localhost:8765/studio/`).
+**Laisse la fenêtre noire ouverte** pendant que tu travailles : elle sert le studio, le portail joueurs et les sauvegardes.
+
+- Windows utilise PowerShell (déjà inclus dans Windows 10/11). Au premier lancement, Windows peut demander d'autoriser l'accès réseau : accepte pour les **réseaux privés** (sinon les joueurs ne pourront pas voir le portail).
+- Le port se change dans `DevPortals.bat` (`set PORT=8765`). Garde toujours le même : tes projets sont liés à l'adresse du studio.
 
 ---
 
-## 🧰 Fonctionnalités
+## 🧰 Tout ce que contient DevPortals
 
-| Module | Ce que tu peux faire |
+### Projet
+| Section | Contenu |
 |---|---|
-| **Tableau de bord** | Nom, pitch, genre, plateformes, moteur, couverture ; statistiques ; idée rapide ; conseils de l'agent (prochaines étapes, points faibles, scope réaliste, pitch & noms) |
-| **Idées** | Journal d'idées (catégories, statuts, tags, épingles, images). **Chaque idée a sa discussion avec l'agent** : suggestions, développer, critique franche, 5 variantes, lien avec l'histoire, comment l'implémenter, questions clés. Idée → image, → GDD, → tâche, → fiche |
-| **Game Design Doc** | 17 sections guidées (concept, piliers, boucle de gameplay, mécaniques, progression, UI, technique, business, marketing, production, risques…) + sections perso. L'agent rédige un premier jet, améliore, suggère, vérifie la cohérence. **Export Markdown, HTML ou PDF** du document complet (avec fiches et images) |
-| **Histoire** | Trame (logline, synopsis, univers, conflit, thèmes, ton, fin), **chapitres** (personnages et lieux présents), **chronologie des apparitions** : chaque fiche indique à quel chapitre elle arrive |
-| **Personnages** | Fiche complète : nom, alias, âge, genre, espèce, rôle, faction, origine, statut, **quand/comment il arrive**, arc, apparence, tenue, personnalité, forces/faiblesses, motivations, secret, répliques, passé, **relations**, compétences, stats, véhicules, voix… + galerie d'images |
-| **Véhicules** | Constructeur, modèle, année, catégorie, classe, propriétaire, apparition, design, fiche technique (vitesse, 0-100, puissance, couple, poids, moteur, motricité), **notes de conduite 0-10 avec barres**, améliorations, gadgets, son moteur… |
-| **Lieux, Objets & armes, Factions, Quêtes & missions** | Fiches dédiées, reliées entre elles (propriétaires, membres, lieux, chapitres) |
-| **Direction artistique** | Style, mots-clés, références, **palette** (extraite du moodboard ou proposée par l'IA), règles (lumière, formes, matières, caméra, UI, typo, à faire/à éviter), **moodboard**, **prompt de style global** appliqué à toutes les images |
-| **Idée → Image** | Décris ton idée, choisis type/style/format : l'agent réécrit un prompt détaillé et génère l'image. Images de référence pour modifier une image ou garder la cohérence. Galerie : associer à une fiche, moodboard, critique… |
-| **Critique de captures** | Glisse ou colle (Ctrl+V) tes screenshots : l'agent répond **franchement** (encourageant / franc / brutal) avec notes /10, problèmes classés, corrections rapides, priorité n°1. Comparaison avant/après. Transforme la critique en tâches |
-| **Assistant IA** | Conversations avec 10 personas (game designer, scénariste, directeur artistique, level designer, directeur technique, producteur, critique impitoyable, joueur testeur, sound designer, marketing). Connaît tout ton projet. Images jointes |
-| **Tâches & roadmap** | Kanban glisser-déposer ; plan de production généré par l'IA ; « Que faire cette semaine ? » |
-| **Paramètres** | Fournisseurs IA, modèles, comportement de l'agent, sauvegarde/import, multi-projets |
+| **Tableau de bord** | Nom, pitch, genre, plateformes, moteur, étape (concept → sortie), dates, couverture · statistiques · idée rapide · prochain jalon avec compte à rebours · état du portail · tâches urgentes · activité récente · question de réflexion |
+| **Idées** | Journal d'idées (catégories, statuts, tags, épingles, images) · **évaluation 5 étoiles** (plaisir, originalité, cohérence, faisabilité) · **notes d'évolution** datées · **cartes de questions** pour creuser l'idée · conversion en section GDD, tâche ou fiche |
+| **Game Design Doc** | 17 sections guidées + sections perso · **modèles prêts à remplir** pour chaque section · aperçu Markdown · **export Markdown, HTML ou PDF** du document complet (avec fiches et images) |
+| **Histoire** | Trame (logline, synopsis, univers, conflit, thèmes, ton, fin) · structure en 3 actes · **chapitres** (personnages, lieux, missions, scènes, musiques) · **chronologie des apparitions** |
+| **Boîte à outils** | Générateur d'idées (avec verrous) · générateur de **noms** (fantasy, sci-fi, personnages, véhicules, lieux, factions) · **cartes de réflexion** · **checklists** (game feel, tutoriel, accessibilité, playtest, polish, performance, lancement Steam) · calculateur de **courbe d'XP** · lanceur de dés |
 
-Raccourcis : **Alt+N** = nouvelle idée partout · **Ctrl+V** = coller une image · **Ctrl+Entrée** = envoyer.
+### Univers (fiches complètes, toutes reliées entre elles)
+| Fiche | Exemples de champs |
+|---|---|
+| **Personnages** | nom, alias, âge, genre, espèce, rôle, faction, origine, statut, **arrive au chapitre / quand et comment il arrive**, arc, apparence, tenue, personnalité, forces, faiblesses, motivations, secret 🔒, répliques, passé, **relations**, compétences, stats, véhicules, thème musical, voix… |
+| **Véhicules** | constructeur, modèle, année, catégorie, classe, propriétaire, apparition, design, fiche technique (vitesse, 0-100, puissance, couple, poids, moteur, motricité), **notes de conduite 0-10 avec barres**, améliorations, gadgets, son… |
+| **Lieux** | type, région, « situé dans », chapitre, climat, taille, population, ambiance, histoire, points d'intérêt, secrets 🔒, activités, dangers, services, habitants, factions, musique |
+| **Cartes du monde** | importe une carte (monde, ville, niveau, circuit) et place des **repères déplaçables** reliés aux lieux, missions, personnages ; repères privés possibles ; zoom |
+| **Objets & armes, Factions, Quêtes & missions** | rareté, effets, stats · chef, membres, alliés/ennemis · donneur, lieu, difficulté, étapes, récompenses… |
+| **Dialogues & scènes** | script `NOM : réplique` avec aperçu mis en forme, choix du joueur, état d'écriture/enregistrement |
+| **Lore & encyclopédie** | articles d'univers par catégorie, liens vers personnages/lieux/factions, vérité cachée 🔒 |
+
+### Création
+| Section | Contenu |
+|---|---|
+| **Direction artistique** | style, mots-clés, références, **palette** (extraite automatiquement du moodboard), règles (lumière, formes, matières, caméra, UI, typo, à faire/à éviter), **moodboard**, test noir & blanc |
+| **Musique & son** | pistes avec **fichier audio intégré** (MP3, OGG, WAV, M4A, FLAC), type, état, compositeur, BPM, tonalité, boucle, ambiance, où elle joue (chapitres, lieux, personnages, missions), licence · lecteur audio intégré |
+| **Médiathèque** | toutes les images et sons du projet, légendes, tags, filtres, nettoyage des fichiers inutilisés, choix des médias publics |
+
+### Production
+| Section | Contenu |
+|---|---|
+| **Tâches & jalons** | **kanban** glisser-déposer (backlog, à faire, en cours, terminé), priorités, échéances, responsables, **jalons avec progression** (roadmap), export CSV |
+| **Assets** | modèles 3D, textures, animations, sons… état, priorité, responsable, échéance, estimation / temps passé |
+| **Bugs** | gravité, état, version, plateforme, fréquence, étapes de reproduction, attendu/obtenu · **création de tâche de correction** |
+| **Playtests** | sessions, testeurs, notes moyennes (plaisir, clarté, difficulté…), retours, citations · **actions → tâches** |
+| **Captures & versions** | captures d'écran par build, auto-évaluation, notes, **comparateur avant/après** (curseur), notes → tâches |
+| **Équipe & crédits** | membres, rôles, départements, liens · affichés comme crédits sur le portail |
+
+### Partage
+| Section | Contenu |
+|---|---|
+| **Devlog & mises à jour** | articles (brouillon **pré-rempli automatiquement avec ce qui a changé**), **notes de version** (ajouté / modifié / corrigé / retiré), pré-remplissage depuis les tâches terminées |
+| **Portail joueurs** | voir ci-dessous 👇 |
+
+Et partout : **recherche globale (Ctrl+K)**, **corbeille** avec restauration, **multi-projets** avec modèles (course, RPG, plateforme, horreur), couleur d'accent au choix, thème sombre neutre.
 
 ---
 
-## 🤖 Fournisseurs IA pris en charge
+## 🌐 Le portail joueurs
 
-| Fournisseur | Texte | Vision | Images | Clé |
-|---|:-:|:-:|:-:|---|
-| **Anthropic Claude** (recommandé pour l'agent et la critique) — `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-4-5`, `claude-fable-5-1` | ✅ | ✅ | — | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
-| **OpenAI** — GPT-6 (Astra / Sol / Luna), GPT Image 2.5 | ✅ | ✅ | ✅ | [platform.openai.com](https://platform.openai.com/api-keys) |
-| **Google Gemini** — Gemini 3.x, images « Nano Banana » | ✅ | ✅ | ✅ | [aistudio.google.com](https://aistudio.google.com/apikey) (offre gratuite) |
-| **OpenRouter** — des centaines de modèles avec une seule clé | ✅ | ✅ | — | [openrouter.ai](https://openrouter.ai/keys) |
-| **Ollama** / **LM Studio** — IA 100 % locale et gratuite | ✅ | ✅* | — | aucune |
-| **Compatible OpenAI** — Mistral, Groq, DeepSeek, xAI… | ✅ | ✅* | — | selon le service |
-| **Pollinations** — gratuit, sans clé (mode par défaut) | ✅ | — | ✅ | aucune |
+Un vrai petit site web, **hébergé sur le PC où DevPortals est ouvert**, pour que tes joueurs suivent le développement :
 
-\* selon le modèle choisi. Les noms de modèles sont modifiables et le bouton **« Lister les modèles »** récupère la liste à jour auprès du fournisseur.
+1. Dans une fiche, un article, une version, un jalon, une carte ou un média, clique sur **« Privé » → « Public »**.
+2. Va dans **Portail joueurs** → règle le titre, l'accroche, la bannière, les liens (Steam, Discord…), la FAQ → **Publier maintenant**.
+3. Donne aux joueurs l'adresse affichée (ex. `http://192.168.1.23:8765/`). Ils voient : accueil, **« Nouveautés depuis ta dernière visite »** avec badges **NOUVEAU / MIS À JOUR**, actualités, notes de version, roadmap, personnages, véhicules, lieux, musique (écoute en ligne), cartes interactives, galerie, équipe, FAQ.
+4. Le portail se met à jour quand tu republies (option **publication automatique**). Les joueurs déjà sur la page voient un bandeau « Du nouveau contenu a été publié ».
 
-Dans **Paramètres → Quelle IA fait quoi ?** tu choisis un fournisseur pour l'agent (texte), la vision (analyse d'images) et la génération d'images. Si le fournisseur choisi n'est pas configuré, l'app bascule automatiquement sur un autre fournisseur configuré, puis sur le mode gratuit.
+🔒 Les champs marqués d'un cadenas (secrets, spoilers, notes internes, étapes de mission…) **ne sont jamais publiés**. Le **studio et l'API ne sont accessibles que depuis ton PC** : les joueurs ne peuvent rien modifier.
 
-**Ollama** : pour autoriser l'app à s'y connecter, définis `OLLAMA_ORIGINS=*` (Windows : `setx OLLAMA_ORIGINS "*"`, puis redémarre Ollama). **LM Studio** : onglet Developer → Start Server, active « Enable CORS ».
+Réseau : les joueurs doivent être sur le même réseau (maison, LAN, Wi-Fi). Pour Internet, redirige le port dans ton routeur ou utilise un tunnel (Tailscale, ngrok…).
 
 ---
 
-## 🔒 Données & confidentialité
+## 💾 Données & sauvegardes
 
-- **Tout reste sur ton ordinateur**, dans le stockage local du navigateur (IndexedDB) : projets, images, clés API.
-- Les clés API ne sont envoyées **qu'au fournisseur correspondant**, directement depuis ton navigateur.
-- ⚠️ Si tu vides les données du navigateur, tu perds tes projets : **exporte régulièrement** (Paramètres → *Exporter ce projet* ou *Sauvegarde complète*). Le fichier `.json` contient tout, images comprises, et se réimporte sur n'importe quel ordinateur.
-- Utilise toujours le même navigateur pour retrouver tes projets.
+- Les projets sont stockés dans le navigateur (IndexedDB) **et sauvegardés automatiquement sur le disque** dans le dossier `sauvegardes/` (toutes les 10 min par défaut, les 30 dernières sont gardées). Restauration en un clic dans *Paramètres & données*.
+- Export / import manuel en `.json` (médias inclus) pour changer d'ordinateur. Les exports de l'ancienne version (GameForge) s'importent aussi.
+- Le portail publié se trouve dans `portail-data/`.
 
 ---
 
 ## 📁 Structure
 
 ```
-GameForge.bat        Lanceur Windows
-lancer.sh            Lanceur macOS / Linux
-index.html           Application
-assets/css/app.css   Styles (thème sombre / clair)
-assets/js/
-  util.js db.js store.js     Utilitaires, stockage IndexedDB, projets, import/export
-  schemas.js                 Sections du GDD, fiches (personnages, véhicules…)
-  ai.js                      Connecteurs IA (Claude, OpenAI, Gemini, OpenRouter, Ollama, Pollinations…)
-  agent.js                   Agent : personas, contexte du projet, streaming, images
-  md.js ui.js app.js         Markdown, composants, navigation
-  views/*.js                 Écrans
+DevPortals.bat          Lanceur Windows (serveur PowerShell)
+lancer.sh               Lanceur macOS / Linux (serveur Python)
+serveur/server.ps1      Serveur local Windows (aucune installation)
+serveur/server.py       Serveur local Python 3
+studio/                 L'application (HTML / CSS / JavaScript, sans dépendance)
+portail/                Le site public des joueurs
+portail-data/           (généré) contenu publié du portail
+sauvegardes/            (généré) sauvegardes automatiques
 ```
-
-Aucune dépendance, aucun build : du HTML/CSS/JavaScript pur.
 
 ---
 
 ## 🇬🇧 English
 
-**GameForge Studio** is an AI workshop to design your video game. Log ideas and the agent keeps going with suggestions; write a full GDD with guided sections; build your story with chapters and an appearance timeline; keep complete sheets for **characters** (name, age, when they appear, looks, personality, relationships, stats, images…), **vehicles** (make, specs, 0-10 driving ratings, owner, first appearance…), locations, items, factions and quests; define your art direction (palette, moodboard, global style prompt); turn ideas into images; drop screenshots for a **frank critique**; chat with 10 expert personas; plan production on a kanban board.
+**DevPortals** is a studio to design your video game and share it with players — no AI, no install, no account.
+Ideas (5-star ratings, notes, reflection cards), a guided GDD with templates and Markdown/HTML/PDF export, story chapters and an appearance timeline, complete sheets for **characters, vehicles, locations, items, factions, quests, dialogue, lore, music (with audio files), assets, bugs, playtests and team**, interactive **world maps**, art direction (palette, moodboard), media library, kanban + milestones, screenshot builds with a before/after slider, devlog & patch notes, a toolbox (idea/name generators, checklists, XP curve, dice), global search (Ctrl+K), trash, templates and automatic disk backups.
 
-- **Run it:** double-click `GameForge.bat` (Windows), run `./lancer.sh` (macOS/Linux) or open `index.html`. No install.
-- **Language:** French by default, switch to English with the **FR / EN** toggle.
-- **AI:** works out of the box in free mode (Pollinations). Add a Claude (recommended), OpenAI, Gemini or OpenRouter key — or use Ollama / LM Studio locally — in **Settings**.
-- **Privacy:** everything is stored locally in your browser; keys are only sent to their provider. Export your project regularly (JSON with images) to back it up.
+The **player portal** is a website served from your PC: mark items as *Public*, click *Publish*, and players on your network open the displayed address to see news, updates, roadmap, sheets, music, maps and gallery, with **NEW** badges since their last visit. Private fields (🔒) are never published; the studio and API only answer on your own PC.
+
+Run **`DevPortals.bat`** (Windows) or **`./lancer.sh`** (macOS / Linux, Python 3). French by default, English via the **FR / EN** toggle.
