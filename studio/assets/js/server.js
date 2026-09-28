@@ -1,69 +1,26 @@
-/* DevPortals — lien avec le serveur local : portail joueurs, sauvegardes sur le disque */
+/* DevPortals — lien avec le serveur : état, portail du jeu (soumission à la validation), versions */
 (function () {
-  const U = DP.util, S = DP.store, SC = DP.schemas;
-
-  async function api(path, { method = 'GET', body, headers } = {}) {
-    const res = await fetch(path, { method, body, headers, cache: 'no-store' });
-    if (!res.ok) throw new Error(`${T('Serveur local', 'Local server')} (${res.status}) : ${U.truncate(await res.text(), 200)}`);
-    const ct = res.headers.get('content-type') || '';
-    return ct.includes('json') ? res.json() : res.text();
-  }
+  const U = DP.util, S = DP.store, SC = DP.schemas, API = DP.api;
 
   const SV = (DP.server = {
-    online: false,
+    online: true,
     info: null,
     async check() {
-      if (location.protocol === 'file:') { SV.online = false; return false; }
       try {
-        SV.info = await api('/api/info');
+        SV.info = await API('/api/info');
         SV.online = true;
-      } catch (e) { SV.online = false; SV.info = null; }
+      } catch (e) { SV.online = false; }
       return SV.online;
     },
-    listMedia: () => api('/api/media'),
-    uploadMedia: (name, blob) => api(`/api/media?name=${encodeURIComponent(name)}`, { method: 'POST', body: blob, headers: { 'content-type': 'application/octet-stream' } }),
-    publishSite: (json) => api('/api/publish', { method: 'POST', body: json, headers: { 'content-type': 'application/json' } }),
-    prune: (keep) => api('/api/prune', { method: 'POST', body: keep.join('\n'), headers: { 'content-type': 'text/plain' } }),
-    unpublish: () => api('/api/unpublish', { method: 'POST' }),
-    backup: (name, json) => api(`/api/backup?name=${encodeURIComponent(name)}`, { method: 'POST', body: json, headers: { 'content-type': 'application/json' } }),
-    listBackups: () => api('/api/backups'),
-    getBackup: (name) => fetch(`/api/backups/${encodeURIComponent(name)}`, { cache: 'no-store' }).then((r) => { if (!r.ok) throw new Error(r.statusText); return r.text(); }),
-    openFolder: (which) => api(`/api/open-folder?which=${which}`, { method: 'POST' }),
-  });
-
-  /* ================= Sauvegarde automatique sur le disque ================= */
-  const BK = (DP.backup = {
-    last: 0,
-    running: false,
-    fileName() {
-      const d = new Date();
-      const pad = (n) => String(n).padStart(2, '0');
-      return `${U.slug(S.project.name)}__${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}.json`;
-    },
-    async now({ silent = false } = {}) {
-      if (!SV.online || BK.running) return false;
-      BK.running = true;
-      try {
-        await SV.backup(BK.fileName(), await S.projectJSON());
-        BK.last = Date.now();
-        S.dirtySinceBackup = false;
-        S.settings.lastBackup = Date.now();
-        await S.saveSettings();
-        if (!silent) DP.ui.toast(T('Sauvegarde enregistrée dans le dossier « sauvegardes »', 'Backup saved to the "sauvegardes" folder'), 'success');
-        return true;
-      } catch (e) {
-        if (!silent) DP.ui.toast(e.message, 'error');
-        return false;
-      } finally { BK.running = false; }
-    },
-    start() {
-      setInterval(() => {
-        const st = S.settings;
-        if (!st.autoBackup || !SV.online || !S.dirtySinceBackup) return;
-        if (Date.now() - BK.last < (st.backupEvery || 10) * 60000) return;
-        BK.now({ silent: true });
-      }, 30000);
-    },
+    portal: (pid) => API(`/api/portals/${pid}`),
+    myPortals: () => API('/api/portals/mine'),
+    preparePortal: (pid, title) => API(`/api/portals/${pid}/prepare`, { method: 'POST', body: { title } }),
+    uploadPortalFile: (pid, name, blob) => API(`/api/portals/${pid}/files?name=${encodeURIComponent(name)}`, { method: 'POST', body: blob, headers: { 'Content-Type': 'application/octet-stream' } }),
+    submitPortal: (pid, json) => API(`/api/portals/${pid}/submit`, { method: 'POST', body: json, headers: { 'Content-Type': 'application/json' } }),
+    cancelPortal: (pid) => API(`/api/portals/${pid}/cancel`, { method: 'POST', body: {} }),
+    unpublishPortal: (pid) => API(`/api/portals/${pid}/unpublish`, { method: 'POST', body: {} }),
+    versions: (pid) => API(`/api/projects/${pid}/versions`),
+    restoreVersion: (pid, name) => API(`/api/projects/${pid}/versions/${encodeURIComponent(name)}/restore`, { method: 'POST', body: {} }),
   });
 
   /* ================= Publication du portail joueurs ================= */
@@ -127,6 +84,7 @@
         storyTeaser: po.sections.story ? (po.storyTeaser || p.story.logline || '') : '',
       },
       project: { name: p.name, genre: p.meta.genre, platforms: p.meta.platforms, stage: p.meta.stage, releaseDate: p.meta.releaseDate },
+      catalog: { genres: po.catalog.genres || [], styles: po.catalog.styles || [], modes: po.catalog.modes || [], platforms: po.catalog.platforms || [], tags: po.catalog.tags || [] },
       news: po.sections.news === false ? [] : p.devlog.posts.filter((x) => x.public).sort((a, b) => String(b.date).localeCompare(String(a.date)))
         .map((x) => ({ id: x.id, title: x.title, date: x.date, cover: ref(x.cover, true), content: x.content, tags: x.tags || [], createdAt: x.createdAt, updatedAt: x.updatedAt })),
       patches: po.sections.patches === false ? [] : p.devlog.patches.filter((x) => x.public).sort((a, b) => String(b.date).localeCompare(String(a.date)))
@@ -157,52 +115,46 @@
   const PB = (DP.publisher = {
     busy: false,
     build,
-    /** Publie le portail. onProgress(texte) */
-    async publish({ onProgress, silent = false } = {}) {
-      if (!SV.online) throw new Error(T('Le serveur local n\'est pas lancé. Ouvre DevPortals avec DevPortals.bat (ou lancer.sh).', 'The local server is not running. Open DevPortals with DevPortals.bat (or lancer.sh).'));
-      if (PB.busy) return;
+    /** Envoie le portail du jeu : publié directement (admin) ou soumis à la validation. onProgress(texte) */
+    async publish({ onProgress } = {}) {
+      if (PB.busy) return null;
       PB.busy = true;
       try {
+        await S.saveNow();
+        const p = S.project;
         const { data, media } = build();
         onProgress && onProgress(T('Préparation des médias…', 'Preparing media…'));
-        const existing = new Set(await SV.listMedia());
+        const prep = await SV.preparePortal(p.id, data.site.title || p.name);
+        const existing = new Set(prep.files);
         const paths = {};
-        const keep = [];
         let i = 0, uploaded = 0;
         for (const [id, info] of media) {
           i++;
           const m = await prepareMedia(id, info.big);
           if (!m) continue;
           paths[id] = `data/media/${m.name}`;
-          keep.push(m.name);
           if (existing.has(m.name)) continue;
           onProgress && onProgress(T(`Envoi des médias ${i}/${media.size}…`, `Uploading media ${i}/${media.size}…`));
           let blob = m.rec.blob;
           if (m.convert) {
             try { blob = (await U.resizeImage(blob, m.convert.max, m.convert.mime, 0.86)).blob; } catch (e) { /* on envoie l'original */ }
           }
-          await SV.uploadMedia(m.name, blob);
+          await SV.uploadPortalFile(p.id, m.name, blob);
           uploaded++;
         }
         const json = JSON.stringify(data).replace(/"@((?:img|aud)_[a-z0-9]+)"/g, (all, id) => JSON.stringify(paths[id] || ''));
-        onProgress && onProgress(T('Publication du site…', 'Publishing site…'));
-        await SV.publishSite(json);
-        await SV.prune(keep);
-        S.project.portal.lastPublished = Date.now();
-        S.project.portal.dirty = false;
+        onProgress && onProgress(T('Envoi du portail…', 'Sending portal…'));
+        const res = await SV.submitPortal(p.id, json);
+        p.portal.lastPublished = Date.now();
+        p.portal.dirty = false;
+        S.touch();
+        p.portal.dirty = false;
         await S.saveNow();
-        if (!silent) DP.ui.toast(T(`Portail publié ✔ (${uploaded} média(s) envoyé(s))`, `Portal published ✔ (${uploaded} media uploaded)`), 'success');
-        return { uploaded };
+        return { ...res, uploaded };
       } finally { PB.busy = false; }
     },
-    _auto: U.debounce(async () => {
-      const po = S.project && S.project.portal;
-      if (!po || !po.autoPublish || !SV.online || !po.lastPublished) return;
-      try { await PB.publish({ silent: true }); DP.ui.toast(T('Portail joueurs mis à jour automatiquement', 'Player portal auto-updated')); } catch (e) { console.warn(e); }
-    }, 60000),
     onChange() {
       if (S.project && S.project.portal) S.project.portal.dirty = true;
-      PB._auto();
     },
   });
 })();

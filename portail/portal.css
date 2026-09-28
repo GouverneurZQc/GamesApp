@@ -168,3 +168,10 @@ details.faq summary { cursor: pointer; font-weight: 600; }
   .frow { grid-template-columns: 1fr; gap: 2px; }
   .hero { min-height: 340px; }
 }
+
+/* Retour au catalogue & aperçu */
+.back-hub { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 14px; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--border); white-space: nowrap; }
+.back-hub:hover { color: var(--text); background: var(--panel2); }
+.preview-bar { background: #f59e0b; color: #1a1200; text-align: center; font-size: 13.5px; font-weight: 600; padding: 7px 14px; }
+.foot a:hover { color: var(--text); }
+@media (max-width: 640px) { .back-hub span { display: none; } }

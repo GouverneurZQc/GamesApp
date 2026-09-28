@@ -1,4 +1,4 @@
-/* DevPortals — portail joueurs : lit data/site.json publié depuis le studio */
+/* DevPortals — portail d'un jeu (/g/<slug>/) : lit data/site.json publié depuis le studio */
 (function () {
   const esc = DP.util.esc;
   const md = (s) => DP.md.render(s || '');
@@ -9,11 +9,44 @@
   let lang = 'fr';
   let prevVisit = 0;
   const T = (fr, en) => (lang === 'en' ? en : fr);
+  // ?preview=1 : aperçu de la version envoyée (créateur ou administration)
+  const PREVIEW = new URLSearchParams(location.search).has('preview');
+  const SLUG = (location.pathname.match(/\/g\/([^/]+)\//) || [0, 'jeu'])[1];
 
   const STAGES = { concept: ['Concept', 'Concept'], prototype: ['Prototype', 'Prototype'], vslice: ['Vertical slice', 'Vertical slice'], alpha: ['Alpha', 'Alpha'],
     beta: ['Bêta', 'Beta'], early: ['Accès anticipé', 'Early access'], release: ['Disponible', 'Out now'] };
 
   const safeUrl = (u) => (/^https?:\/\//i.test(u || '') ? u : '');
+  // Le contenu vient de créateurs : on n'accepte que des chemins de médias, couleurs et clés attendus
+  const safeMedia = (u) => (typeof u === 'string' && /^data\/media\/[A-Za-z0-9_.-]+$/.test(u) ? u : '');
+  const safeColor = (c) => (typeof c === 'string' && /^#[0-9a-f]{3,8}$/i.test(c) ? c : '');
+  const KEY_RE = /^[a-z][a-z0-9_-]{0,30}$/;
+  const own = (o, k) => !!o && Object.prototype.hasOwnProperty.call(o, k);
+  const arr = (v) => (Array.isArray(v) ? v : []);
+
+  function sanitize(d) {
+    ['news', 'patches', 'roadmap', 'maps', 'gallery', 'faq'].forEach((k) => { d[k] = arr(d[k]).filter((x) => x && typeof x === 'object'); });
+    d.site = d.site && typeof d.site === 'object' ? d.site : {};
+    d.project = d.project && typeof d.project === 'object' ? d.project : {};
+    d.site.hero = safeMedia(d.site.hero);
+    d.site.accent = safeColor(d.site.accent) || '#8b5cf6';
+    const types = {}, entities = {};
+    Object.keys(d.types || {}).forEach((t) => { if (KEY_RE.test(t) && d.types[t] && typeof d.types[t] === 'object') types[t] = d.types[t]; });
+    Object.keys(types).forEach((t) => {
+      entities[t] = arr(own(d.entities, t) ? d.entities[t] : []).filter((e) => e && typeof e === 'object').map((e) => ({
+        ...e, id: String(e.id || ''), tags: arr(e.tags), image: safeMedia(e.image), images: arr(e.images).map(safeMedia).filter(Boolean), audio: safeMedia(e.audio),
+        groups: arr(e.groups).map((g) => ({ ...g, fields: arr(g && g.fields).map((f) => ({ ...f, links: f && f.links ? arr(f.links).map((l) => ({ ...l, type: KEY_RE.test((l && l.type) || '') ? l.type : '' })) : undefined })) })),
+      }));
+    });
+    d.types = types; d.entities = entities;
+    d.news.forEach((n) => { n.cover = safeMedia(n.cover); n.id = String(n.id || ''); });
+    d.gallery = d.gallery.map((g) => ({ ...g, src: safeMedia(g.src) })).filter((g) => g.src);
+    d.roadmap.forEach((m) => { if (!['done', 'active', 'planned'].includes(m.status)) m.status = 'planned'; });
+    d.maps = d.maps.map((m) => ({ ...m, id: String(m.id || ''), image: safeMedia(m.image), markers: arr(m.markers).map((k) => ({
+      ...k, x: +k.x || 0, y: +k.y || 0, color: safeColor(k.color) || '#ef4444',
+      link: k.link && KEY_RE.test(k.link.type || '') ? k.link : null })) })).filter((m) => m.image);
+    return d;
+  }
   const fmtDay = (d) => {
     if (!d) return '';
     const dt = typeof d === 'number' ? new Date(d) : new Date(`${d}T12:00:00`);
@@ -36,13 +69,14 @@
   }
 
   async function fetchData() {
-    const r = await fetch(`data/site.json?t=${Date.now()}`, { cache: 'no-store' });
+    const r = await fetch(`data/site.json?t=${Date.now()}${PREVIEW ? '&preview=1' : ''}`, { cache: 'no-store', credentials: 'same-origin' });
     if (!r.ok) throw new Error(String(r.status));
     return r.json();
   }
 
   function trackVisit() {
-    const key = `dp_visit_${data.site.title}`;
+    if (PREVIEW) { prevVisit = 0; return; }
+    const key = `dp_visit_${SLUG}`;
     try {
       const inSession = sessionStorage.getItem(key);
       if (inSession !== null) prevVisit = +inSession;
@@ -69,20 +103,21 @@
   }
 
   function renderTop(route) {
-    $top.innerHTML = `<div class="wrap"><a class="brand" href="#/">${esc(data.site.title)}</a>
+    $top.innerHTML = `${PREVIEW ? `<div class="preview-bar">${T('Aperçu — cette version n\'est visible que par toi et l\'administration tant qu\'elle n\'est pas validée.', 'Preview — this version is only visible to you and the administration until it is approved.')}</div>` : ''}
+      <div class="wrap"><a class="back-hub" href="/" title="${T('Tous les jeux', 'All games')}">←<span> ${T('Catalogue', 'Catalog')}</span></a><a class="brand" href="#/">${esc(data.site.title)}</a>
       <nav class="menu">${navItems().map(([r, l]) => `<a href="#/${r}" class="${(route || '') === r || (r && route.startsWith(r + '/')) ? 'on' : ''}">${esc(l)}</a>`).join('')}</nav></div>`;
   }
 
   function renderFoot() {
     const links = (data.site.links || []).map((l) => (safeUrl(l.url) ? `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>` : '')).filter(Boolean).join(' · ');
     $foot.innerHTML = `<div class="wrap"><span>© ${new Date().getFullYear()} ${esc(data.project.name || data.site.title)}${links ? ` · ${links}` : ''}</span>
-      <span>${T('Mis à jour le', 'Updated on')} ${fmtDay(data.generatedAt)} · ${T('Propulsé par', 'Powered by')} DevPortals</span></div>`;
+      <span>${T('Mis à jour le', 'Updated on')} ${fmtDay(data.generatedAt)} · <a href="/">${T('Tous les jeux', 'All games')}</a></span></div>`;
   }
 
   /* ---------------- Composants ---------------- */
   function itemCard(type, e) {
     const img = e.image;
-    return `<a class="item" href="#/t/${type}/${esc(e.id)}">
+    return `<a class="item" href="#/t/${esc(type)}/${esc(e.id)}">
       <div class="img" ${img ? `style="background-image:url('${esc(img)}')"` : ''}>${img ? '' : esc(type === 'tracks' ? '♪' : initials(e.name))}</div>
       <span class="corner">${badge(e)}</span>
       <div class="body"><strong>${esc(e.name)}</strong>${e.subtitle ? `<small>${esc(e.subtitle)}</small>` : ''}${e.blurb ? `<p>${esc(stripMd(e.blurb))}</p>` : ''}</div></a>`;
@@ -103,7 +138,7 @@
   }
 
   function msCard(m) {
-    return `<div class="ms ${m.status}"><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>${m.status === 'done' ? '✔ ' : ''}${esc(m.title)}</strong>
+    return `<div class="ms ${esc(m.status)}"><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>${m.status === 'done' ? '✔ ' : ''}${esc(m.title)}</strong>
       <small class="muted">${m.date ? fmtDay(m.date) : ''}</small></div>${m.description ? `<p class="muted">${esc(m.description)}</p>` : ''}
       <div class="bar"><b style="width:${+m.progress || 0}%"></b></div><small class="muted">${+m.progress || 0} %</small></div></div>`;
   }
@@ -123,7 +158,7 @@
     all.sort((a, b) => b.t - a.t);
     const fresh = prevVisit ? all.filter((x) => x.t > prevVisit) : all.slice(0, 8);
     const typeStrips = Object.keys(data.types).filter((t) => (data.entities[t] || []).length).map((t) => `
-      <section class="block"><div class="wrap"><div class="sec-head"><h2>${esc(data.types[t].label)}</h2><a href="#/t/${t}">${T('Tout voir', 'See all')} →</a></div>
+      <section class="block"><div class="wrap"><div class="sec-head"><h2>${esc(data.types[t].label)}</h2><a href="#/t/${esc(t)}">${T('Tout voir', 'See all')} →</a></div>
       <div class="grid">${data.entities[t].slice(0, 4).map((e) => itemCard(t, e)).join('')}</div></div></section>`).join('');
     $main.innerHTML = `
       <div class="hero" ${s.hero ? `style="background-image:url('${esc(s.hero)}')"` : ''}><div class="wrap">
@@ -161,9 +196,9 @@
     $main.innerHTML = `<div class="wrap page"><h1>Roadmap</h1><p class="muted">${T('Les grandes étapes du développement et leur avancement.', 'The major development milestones and their progress.')}</p><div class="road">${data.roadmap.map(msCard).join('')}</div></div>`;
   }
   function typeList(type) {
+    if (!own(data.types, type)) return notFound();
     const list = data.entities[type] || [];
     const def = data.types[type];
-    if (!def) return notFound();
     if (type === 'tracks') {
       $main.innerHTML = `<div class="wrap page"><h1>${esc(def.label)}</h1><div class="tracks">${list.map((e) => `<div class="track"><a class="cov" href="#/t/tracks/${esc(e.id)}" ${e.image ? `style="background-image:url('${esc(e.image)}')"` : ''}>${e.image ? '' : '♪'}</a>
         <div><a href="#/t/tracks/${esc(e.id)}"><strong>${esc(e.name)}</strong></a> ${badge(e)}<br><small class="muted">${esc(e.subtitle || '')}</small>${e.audio ? `<audio controls preload="none" src="${esc(e.audio)}"></audio>` : ''}</div></div>`).join('')}</div></div>`;
@@ -172,17 +207,17 @@
     $main.innerHTML = `<div class="wrap page"><h1>${esc(def.label)}</h1><div class="grid">${list.map((e) => itemCard(type, e)).join('')}</div></div>`;
   }
   function entityPage(type, id) {
-    const e = (data.entities[type] || []).find((x) => x.id === id);
+    const e = own(data.entities, type) ? data.entities[type].find((x) => x.id === id) : null;
     if (!e) return notFound();
     const imgs = e.images && e.images.length ? e.images.filter(Boolean) : (e.image ? [e.image] : []);
     const val = (f) => {
-      if (f.links) return f.links.map((l) => (l.public && data.entities[l.type] ? `<a class="lnk" href="#/t/${l.type}/${esc(l.id)}">${esc(l.name)}</a>` : esc(l.name)) + (l.note ? ` <span class="muted">(${esc(l.note)})</span>` : '')).join(', ');
+      if (f.links) return f.links.map((l) => (l.public && data.entities[l.type] ? `<a class="lnk" href="#/t/${esc(l.type)}/${esc(l.id)}">${esc(l.name)}</a>` : esc(l.name)) + (l.note ? ` <span class="muted">(${esc(l.note)})</span>` : '')).join(', ');
       if (f.type === 'rating') return `<div class="rating"><div class="bar"><b style="width:${(+f.value || 0) * 10}%"></b></div><strong>${+f.value || 0}/10</strong></div>`;
       if (f.rows) return f.rows.map((r) => `${esc(r.k)} : <strong>${esc(r.v)}</strong>`).join('<br>');
       if (f.tags) return f.tags.map((t) => `<span class="tagx">${esc(t)}</span>`).join('');
       return esc(f.value);
     };
-    $main.innerHTML = `<div class="wrap page"><a class="muted small" href="#/t/${type}">← ${esc(data.types[type].label)}</a>
+    $main.innerHTML = `<div class="wrap page"><a class="muted small" href="#/t/${esc(type)}">← ${esc(data.types[type].label)}</a>
       <h1>${esc(e.name)} ${badge(e)}</h1>${e.subtitle ? `<p class="muted" style="margin-top:-10px">${esc(e.subtitle)}</p>` : ''}
       <div class="detail">
         <div>
@@ -215,7 +250,7 @@
       const pop = document.createElement('div');
       pop.className = 'popup';
       pop.style.left = `${Math.min(85, Math.max(15, +k.x))}%`; pop.style.top = `${+k.y}%`;
-      pop.innerHTML = `<strong>${esc(k.label || '')}</strong>${k.note ? `<p class="muted small" style="margin:6px 0">${esc(k.note)}</p>` : ''}${k.link && data.entities[k.link.type] ? `<div style="margin-top:6px"><a href="#/t/${k.link.type}/${esc(k.link.id)}">${T('Voir la fiche', 'View sheet')} : ${esc(k.link.name)} →</a></div>` : ''}`;
+      pop.innerHTML = `<strong>${esc(k.label || '')}</strong>${k.note ? `<p class="muted small" style="margin:6px 0">${esc(k.note)}</p>` : ''}${k.link && data.entities[k.link.type] ? `<div style="margin-top:6px"><a href="#/t/${esc(k.link.type)}/${esc(k.link.id)}">${T('Voir la fiche', 'View sheet')} : ${esc(k.link.name)} →</a></div>` : ''}`;
       box.appendChild(pop);
     });
   }
@@ -260,7 +295,7 @@
 
   function comingSoon() {
     $top.innerHTML = '';
-    $main.innerHTML = `<div class="soon"><img src="icon.svg" alt=""><h1>${T('Bientôt disponible', 'Coming soon')}</h1><p class="muted">${T('Le portail de ce jeu n\'a pas encore été publié. Reviens bientôt !', 'This game\'s portal has not been published yet. Check back soon!')}</p></div>`;
+    $main.innerHTML = `<div class="soon"><img src="icon.svg" alt=""><h1>${T('Bientôt disponible', 'Coming soon')}</h1><p class="muted">${PREVIEW ? T('Rien à prévisualiser : connecte-toi avec le compte du créateur ou un compte administrateur.', 'Nothing to preview: log in with the creator\'s account or an administrator account.') : T('Le portail de ce jeu n\'est pas (ou plus) publié. Reviens bientôt !', 'This game\'s portal is not (or no longer) published. Check back soon!')}</p><p><a class="btn" href="/">← ${T('Voir tous les jeux', 'See all games')}</a></p></div>`;
     $foot.innerHTML = '';
   }
 
@@ -282,13 +317,12 @@
     try {
       data = await fetchData();
     } catch (e) {
-      lang = (navigator.language || 'fr').startsWith('en') ? 'en' : 'fr';
+      try { lang = localStorage.getItem('dp_lang') === 'en' ? 'en' : 'fr'; } catch (err) { lang = 'fr'; }
       comingSoon();
       setTimeout(init, 30000);
       return;
     }
-    ['news', 'patches', 'roadmap', 'maps', 'gallery', 'faq'].forEach((k) => { data[k] = data[k] || []; });
-    data.types = data.types || {}; data.entities = data.entities || {};
+    sanitize(data);
     lang = data.lang === 'en' ? 'en' : 'fr';
     document.documentElement.lang = lang;
     setAccent(data.site.accent);
@@ -296,7 +330,7 @@
     renderFoot();
     route();
     window.addEventListener('hashchange', route);
-    watchUpdates();
+    if (!PREVIEW) watchUpdates();
   }
   init();
 })();

@@ -1,4 +1,7 @@
-# Données locales générées par DevPortals (contenu publié et sauvegardes)
+# Données générées par DevPortals (comptes, projets, portails) et Python portable
+donnees/
+runtime/
+__pycache__/
+# anciennes versions
 portail-data/
 sauvegardes/
-__pycache__/

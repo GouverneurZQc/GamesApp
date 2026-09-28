@@ -1,4 +1,4 @@
-/* DevPortals — coquille : navigation, routeur, recherche, lecteur audio, idée rapide, modèles de projet */
+/* DevPortals — coquille : connexion, navigation, routeur, recherche, lecteur audio, idée rapide, modèles de projet */
 (function () {
   const U = DP.util, S = DP.store, UI = DP.ui, SC = DP.schemas;
 
@@ -34,7 +34,7 @@
       ] },
       { key: 'share', label: ['Partage', 'Sharing'], items: [
         { route: 'devlog', icon: 'megaphone', label: ['Devlog & mises à jour', 'Devlog & updates'], count: p.devlog.posts.length + p.devlog.patches.length },
-        { route: 'portal', icon: 'rocket', label: ['Portail joueurs', 'Player portal'] },
+        { route: 'portal', icon: 'rocket', label: ['Portail & catalogue', 'Portal & catalog'] },
       ] },
     ];
   }
@@ -83,12 +83,17 @@
           </div>
           <button class="searchbar" id="searchBtn">${UI.icon('search')}<span>${T('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button>
           <nav id="nav" class="nav"></nav>
+          <div class="me-box">
+            <a class="me" href="#/settings" title="${T('Mon compte', 'My account')}"><span class="acc-avatar sm">${U.esc((S.user.displayName || S.user.username).slice(0, 1).toUpperCase())}</span>
+              <span class="grow"><strong>${U.esc(S.user.displayName)}</strong><small>${S.user.role === 'admin' ? T('Administrateur', 'Administrator') : '@' + U.esc(S.user.username)}</small></span></a>
+            <button class="btn icon sm ghost" id="logoutBtn" title="${T('Se déconnecter', 'Log out')}">${UI.icon('logout')}</button>
+          </div>
           <div class="side-foot">
             <div class="seg" id="langSeg">
               <button data-lang="fr" class="${DP.lang === 'fr' ? 'on' : ''}">FR</button>
               <button data-lang="en" class="${DP.lang === 'en' ? 'on' : ''}">EN</button>
             </div>
-            <a href="#/portal" id="srvState" title=""><span class="srv-dot"></span></a>
+            <a href="/" id="srvState" title=""><span class="srv-dot"></span></a>
             <span id="saveState" class="save-state" data-state="saved">${T('Enregistré', 'Saved')}</span>
           </div>
         </aside>
@@ -98,6 +103,7 @@
             <button class="btn icon ghost mobile-only" id="menuBtn">${UI.icon('menu')}</button>
             <h1 id="viewTitle"></h1>
             <div class="top-actions">
+              <a class="btn ghost" href="/" title="${T('Catalogue public des jeux', 'Public game catalog')}">${UI.icon('globe')} <span class="hide-sm">${T('Catalogue', 'Catalog')}</span></a>
               <button class="btn" id="quickIdeaBtn" title="Alt+N">${UI.icon('bulb')} <span class="hide-sm">${T('Nouvelle idée', 'New idea')}</span> <kbd class="hide-sm">Alt+N</kbd></button>
               <a class="btn primary" href="#/portal">${UI.icon('rocket')} <span class="hide-sm">${T('Portail', 'Portal')}</span></a>
             </div>
@@ -118,6 +124,7 @@
         b.onclick = async () => { S.settings.lang = DP.lang = b.dataset.lang; await S.saveSettings(); App.renderShell(); App.route(); };
       });
       document.getElementById('quickIdeaBtn').onclick = () => App.quickIdea();
+      document.getElementById('logoutBtn').onclick = () => App.logout();
       const toggle = (open) => document.body.classList.toggle('nav-open', open);
       document.getElementById('menuBtn').onclick = () => toggle(!document.body.classList.contains('nav-open'));
       document.getElementById('backdrop').onclick = () => toggle(false);
@@ -127,9 +134,10 @@
     updateServerDot() {
       const a = document.getElementById('srvState');
       if (!a) return;
-      a.querySelector('.srv-dot').classList.toggle('on', DP.server.online);
-      a.title = DP.server.online ? T('Serveur local actif — portail joueurs disponible', 'Local server running — player portal available')
-        : T('Serveur local non lancé (ouvre DevPortals avec DevPortals.bat)', 'Local server not running (open DevPortals with DevPortals.bat)');
+      const on = DP.api.online;
+      a.querySelector('.srv-dot').classList.toggle('on', on);
+      a.title = on ? T('Connecté au serveur DevPortals — ouvrir le catalogue public', 'Connected to the DevPortals server — open the public catalog')
+        : T('Serveur DevPortals injoignable : tes modifications seront enregistrées dès son retour', 'DevPortals server unreachable: your changes will be saved when it is back');
     },
 
     renderProjects() {
@@ -147,7 +155,9 @@
         <button class="nav-sec ${col[g.key] ? 'collapsed' : ''}" data-sec="${g.key}">${U.esc(L(g.label))}${UI.icon('down')}</button>
         <div class="nav-group ${col[g.key] ? 'collapsed' : ''}">${g.items.map((it) =>
           `<a href="#/${it.route}" class="nav-item ${cur === it.route ? 'active' : ''}">${UI.icon(it.icon)}<span>${U.esc(L(it.label))}</span>${it.count ? `<em>${it.count}</em>` : ''}</a>`).join('')}</div>`).join('')
-        + `<div class="sep"></div><a href="#/settings" class="nav-item ${cur === 'settings' ? 'active' : ''}">${UI.icon('sliders')}<span>${T('Paramètres & données', 'Settings & data')}</span></a>`;
+        + `<div class="sep"></div>`
+        + (S.user && S.user.role === 'admin' ? `<a href="#/admin" class="nav-item ${cur === 'admin' ? 'active' : ''}">${UI.icon('shield')}<span>${T('Administration', 'Administration')}</span>${DP.admin && DP.admin.pending ? `<em class="hot">${DP.admin.pending}</em>` : ''}</a>` : '')
+        + `<a href="#/settings" class="nav-item ${cur === 'settings' ? 'active' : ''}">${UI.icon('sliders')}<span>${T('Compte & paramètres', 'Account & settings')}</span></a>`;
       nav.querySelectorAll('[data-sec]').forEach((b) => {
         b.onclick = () => { col[b.dataset.sec] = !col[b.dataset.sec]; S.settings.navCollapsed = col; S.saveSettings(); App.refreshNav(); };
       });
@@ -199,6 +209,16 @@
       }
       DP.media.hydrate(el);
       UI.autoGrow(el);
+    },
+
+    async logout() {
+      try { await S.saveNow(); } catch (e) { /* ignore */ }
+      try { await DP.api('/api/auth/logout', { method: 'POST', body: {} }); } catch (e) { /* ignore */ }
+      location.href = '/';
+    },
+
+    loginURL() {
+      return `/#/connexion?retour=${encodeURIComponent(location.pathname + location.search + location.hash)}`;
     },
 
     /** Lecture d'un son dans le lecteur global */
@@ -322,22 +342,77 @@
 
   window.addEventListener('hashchange', () => App.route());
 
+  function bootScreen(html) {
+    document.getElementById('app').innerHTML = `<div class="boot-error"><h2>${UI.icon('rocket')} DevPortals</h2>${html}</div>`;
+  }
+
+  let expiredShown = false;
+  DP.api.onLogout = () => {
+    if (expiredShown || !S.user) return;
+    expiredShown = true;
+    UI.modal({
+      title: T('Session expirée', 'Session expired'),
+      body: `<p>${T('Tu as été déconnecté. Reconnecte-toi pour continuer : les modifications non enregistrées de cette page pourraient être perdues.', 'You were logged out. Log in again to continue: unsaved changes on this page may be lost.')}</p>`,
+      buttons: [{ label: T('Se reconnecter', 'Log in again'), cls: 'primary', action: () => { location.href = App.loginURL(); } }],
+      onClose: () => { expiredShown = false; },
+    });
+  };
+  DP.api.onStatus = () => App.updateServerDot();
+
+  async function offerLegacyImport() {
+    if (S.settings.legacyChecked) return;
+    let legacy = [];
+    try { legacy = await DP.legacy.projects(); } catch (e) { /* ignore */ }
+    S.settings.legacyChecked = true;
+    S.saveSettings();
+    if (!legacy.length) return;
+    UI.modal({
+      title: T('Projets de l\'ancienne version trouvés', 'Projects from the previous version found'),
+      body: `<p>${T('Ce navigateur contient des projets créés avec l\'ancienne version de DevPortals (sans compte) :', 'This browser holds projects created with the previous DevPortals version (no account):')}</p>
+        <ul>${legacy.map((x) => `<li><strong>${U.esc(x.name)}</strong> <small class="muted">${U.relTime(x.updatedAt)}</small></li>`).join('')}</ul>
+        <p class="muted small">${T('Tu peux les importer dans ton compte maintenant ou plus tard depuis « Compte & paramètres ».', 'You can import them into your account now or later from "Account & settings".')}</p>`,
+      buttons: [
+        { label: T('Plus tard', 'Later'), cls: 'ghost' },
+        { label: `${UI.icon('upload')} ${T('Importer dans mon compte', 'Import into my account')}`, cls: 'primary', action: async () => {
+          try {
+            const n = await S.importLegacy(legacy);
+            UI.toast(T(`${n} projet(s) importé(s)`, `${n} project(s) imported`), 'success');
+            App.renderShell(); App.go('dashboard');
+          } catch (e) { UI.toast(e.message, 'error', 7000); }
+        } },
+      ],
+    });
+  }
+
   async function boot() {
-    try {
-      await S.init();
-    } catch (e) {
-      console.error(e);
-      document.getElementById('app').innerHTML = `<div class="boot-error"><h2>DevPortals</h2><p>${U.esc(e.message)}</p></div>`;
+    if (location.protocol === 'file:') {
+      bootScreen(`<p>${T('Le studio fonctionne avec le serveur DevPortals. Lance <b>DevPortals.bat</b> (Windows) ou <b>lancer.sh</b> (Mac / Linux) : la page s\'ouvrira toute seule.', 'The studio runs with the DevPortals server. Start <b>DevPortals.bat</b> (Windows) or <b>lancer.sh</b> (Mac / Linux): the page will open by itself.')}</p>`);
       return;
     }
-    if (!S.project.milestones.length && !S.project.tasks.length && !S.project.ideas.length) { DP.templates.apply(S.project, 'blank'); await S.saveNow(); }
+    let state;
+    try {
+      state = await DP.api('/api/auth/state');
+    } catch (e) {
+      bootScreen(`<p>${U.esc(e.message)}</p><button class="btn primary" onclick="location.reload()">${T('Réessayer', 'Retry')}</button>`);
+      return;
+    }
+    if (!state.user) { location.replace(App.loginURL()); return; }
+    try {
+      await S.init(state.user);
+    } catch (e) {
+      console.error(e);
+      bootScreen(`<p>${U.esc(e.message)}</p><button class="btn primary" onclick="location.reload()">${T('Réessayer', 'Retry')}</button>`);
+      return;
+    }
+    if (!S.project.milestones.length && !S.project.tasks.length && !S.project.ideas.length && Date.now() - S.project.createdAt < 60000) { DP.templates.apply(S.project, 'blank'); S.touch(); }
     App.renderShell();
-    if (DP.db.isMemory) UI.toast(T('Stockage local indisponible : exporte ton projet pour ne rien perdre !', 'Local storage unavailable: export your project to avoid losing work!'), 'error', 9000);
     await App.route();
-    await DP.server.check();
-    App.updateServerDot();
-    DP.backup.start();
-    if (App.current && (App.current.view === 'portal' || App.current.view === 'dashboard' || App.current.view === 'settings')) App.route();
+    DP.server.check().then(() => App.updateServerDot());
+    if (S.user.role === 'admin') {
+      DP.admin.refreshBadge();
+      setInterval(() => DP.admin.refreshBadge(), 60000);
+    }
+    offerLegacyImport();
   }
   boot();
 })();

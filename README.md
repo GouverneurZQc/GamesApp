@@ -1,10 +1,10 @@
 # DevPortals 🚀
 
-**Le studio pour concevoir ton jeu vidéo… et le partager avec tes joueurs.**
-Idées, Game Design Document, histoire, personnages, véhicules, lieux, cartes, musique, direction artistique, production, bugs, playtests — et un **portail web hébergé sur ton PC** où les joueurs voient tout ce qui a été ajouté.
+**La plateforme pour concevoir des jeux vidéo… et les partager avec les joueurs.**
+Chaque créateur a **son compte et son studio** (idées, Game Design Document, histoire, personnages, véhicules, lieux, cartes, musique, direction artistique, production, bugs, playtests) avec **autant de jeux qu'il veut**. Chaque jeu a son **portail web**, publié dans un **catalogue public** après **validation par l'administrateur**. Le tout est hébergé sur ton PC.
 
-> 🇫🇷 Français par défaut · 🇬🇧 English available (bouton **FR / EN** en bas à gauche)
-> Aucune installation, aucune IA, aucun compte : tout reste sur ton ordinateur.
+> 🇫🇷 Français par défaut · 🇬🇧 English available (boutons **FR / EN**)
+> Aucune IA, aucun service externe : tout reste sur ton ordinateur.
 
 ---
 
@@ -13,13 +13,47 @@ Idées, Game Design Document, histoire, personnages, véhicules, lieux, cartes, 
 | Système | Comment lancer |
 |---|---|
 | **Windows** | Double-clique sur **`DevPortals.bat`** |
-| **macOS / Linux** | Lance `./lancer.sh` (nécessite Python 3) |
+| **macOS / Linux** | Lance `./lancer.sh` (Python 3.9 ou plus) |
 
-Le lanceur démarre un **petit serveur local** et ouvre le studio dans ton navigateur (`http://localhost:8765/studio/`).
-**Laisse la fenêtre noire ouverte** pendant que tu travailles : elle sert le studio, le portail joueurs et les sauvegardes.
+- **Pas besoin d'installer Python sur Windows** : si Python est introuvable, le lanceur télécharge **une seule fois** la version portable officielle de python.org (environ 11 Mo), **vérifie son empreinte SHA-256** et la range dans `runtime\python`. Rien n'est installé dans Windows.
+- Le navigateur s'ouvre sur `http://localhost:8765/`. **Laisse la fenêtre noire ouverte** : c'est le serveur.
+- Au premier lancement, Windows peut demander d'autoriser Python sur le réseau : accepte pour les **réseaux privés** (sinon les autres PC ne verront pas le catalogue).
+- Le port se change dans `DevPortals.bat` (`set PORT=8765`) ou avec `DEVPORTALS_PORT` sur macOS / Linux.
 
-- Windows utilise PowerShell (déjà inclus dans Windows 10/11). Au premier lancement, Windows peut demander d'autoriser l'accès réseau : accepte pour les **réseaux privés** (sinon les joueurs ne pourront pas voir le portail).
-- Le port se change dans `DevPortals.bat` (`set PORT=8765`). Garde toujours le même : tes projets sont liés à l'adresse du studio.
+---
+
+## 👤 Comptes, rôles et publication
+
+### Première utilisation : le compte ADMIN
+La toute première page propose de créer le **compte administrateur** (possible uniquement depuis le PC qui héberge DevPortals). Tu choisis aussi le nom de la plateforme affiché sur le catalogue.
+
+### Visiteurs (non connectés)
+Ils voient **seulement le catalogue public** et les **portails des jeux validés** — rien d'autre. Le studio, les projets, les médias et l'administration demandent une connexion.
+
+### Créateurs (joueurs / développeurs)
+- **Créer un compte** depuis le catalogue (si l'administrateur a laissé les inscriptions ouvertes) ou se faire créer un compte par l'admin.
+- Une fois connecté, **tout se débloque** : le studio complet, **autant de jeux que voulu** (sélecteur de projet + « Nouveau projet »), le compte (nom affiché, présentation, mot de passe), l'historique des versions.
+- Chaque créateur a un **profil public** (`/#/createur/<nom>`) avec sa présentation et ses jeux publiés.
+
+### Publier un jeu : envoi → validation → catalogue
+1. Dans le studio, rends publics les éléments à montrer (fiches, articles, versions, jalons, cartes, médias : bouton **Privé → Public**).
+2. Ouvre **Portail & catalogue** : classe ton jeu (**genres, style visuel, modes de jeu, plateformes, mots-clés**), règle la page d'accueil, puis clique sur **Soumettre pour validation**.
+3. L'administrateur reçoit la demande dans **Administration → À valider**, ouvre l'**aperçu** du portail, puis **approuve** ou **refuse avec un message** (le créateur le voit dans son studio).
+4. Une fois approuvé, le jeu apparaît dans le **catalogue public** et son portail est en ligne à `/g/<nom-du-jeu>/`.
+5. Les mises à jour suivent le même chemin : **la version en ligne reste visible** tant que la nouvelle n'est pas validée. Le créateur peut annuler un envoi ou retirer son jeu du catalogue.
+
+Les portails de l'administrateur sont publiés directement. L'admin peut aussi désactiver la validation obligatoire (déconseillé).
+
+### Administration
+| Onglet | Ce qu'on y fait |
+|---|---|
+| **À valider** | aperçu, approbation, refus avec message |
+| **Portails** | tous les portails, état, **mise à la une ★**, retrait du catalogue (avec raison) |
+| **Comptes** | créer un compte, rôle créateur / administrateur, désactiver, nouveau mot de passe, supprimer (copie gardée dans la corbeille du serveur) |
+| **Plateforme** | nom et phrase d'accueil du catalogue, inscriptions ouvertes ou non, validation obligatoire, adresses réseau, dossier des données |
+
+### Le catalogue public
+Tous les portails validés au même endroit : **À la une**, recherche, filtres par **genre, style, mode de jeu, plateforme, étape de développement**, tri (mis à jour, derniers arrivés, A → Z), badges **NOUVEAU / MIS À JOUR** depuis la dernière visite, pages créateurs. S'adapte au téléphone.
 
 ---
 
@@ -66,55 +100,60 @@ Le lanceur démarre un **petit serveur local** et ouvre le studio dans ton navig
 | Section | Contenu |
 |---|---|
 | **Devlog & mises à jour** | articles (brouillon **pré-rempli automatiquement avec ce qui a changé**), **notes de version** (ajouté / modifié / corrigé / retiré), pré-remplissage depuis les tâches terminées |
-| **Portail joueurs** | voir ci-dessous 👇 |
+| **Portail & catalogue** | classement (genres, styles, modes, plateformes), page d’accueil, liens, FAQ, envoi à la validation — voir plus haut 👆 |
 
-Et partout : **recherche globale (Ctrl+K)**, **corbeille** avec restauration, **multi-projets** avec modèles (course, RPG, plateforme, horreur), couleur d'accent au choix, thème sombre neutre.
+Et partout : **recherche globale (Ctrl+K)**, **corbeille** avec restauration, **autant de jeux que tu veux** avec modèles (course, RPG, plateforme, horreur), couleur d'accent au choix, thème sombre neutre.
 
 ---
 
-## 🌐 Le portail joueurs
+## 🌐 Le portail d'un jeu
 
-Un vrai petit site web, **hébergé sur le PC où DevPortals est ouvert**, pour que tes joueurs suivent le développement :
+Chaque jeu validé a son mini-site : accueil, **« Nouveautés depuis ta dernière visite »** avec badges **NOUVEAU / MIS À JOUR**, actualités, notes de version, roadmap, personnages, véhicules, lieux, musique (écoute en ligne), cartes interactives, galerie, équipe, FAQ, et un lien **← Catalogue**. Les joueurs déjà sur la page voient un bandeau quand du nouveau contenu est publié.
 
-1. Dans une fiche, un article, une version, un jalon, une carte ou un média, clique sur **« Privé » → « Public »**.
-2. Va dans **Portail joueurs** → règle le titre, l'accroche, la bannière, les liens (Steam, Discord…), la FAQ → **Publier maintenant**.
-3. Donne aux joueurs l'adresse affichée (ex. `http://192.168.1.23:8765/`). Ils voient : accueil, **« Nouveautés depuis ta dernière visite »** avec badges **NOUVEAU / MIS À JOUR**, actualités, notes de version, roadmap, personnages, véhicules, lieux, musique (écoute en ligne), cartes interactives, galerie, équipe, FAQ.
-4. Le portail se met à jour quand tu republies (option **publication automatique**). Les joueurs déjà sur la page voient un bandeau « Du nouveau contenu a été publié ».
+🔒 Les champs marqués d'un cadenas (secrets, spoilers, notes internes, étapes de mission…) **ne sont jamais publiés**.
 
-🔒 Les champs marqués d'un cadenas (secrets, spoilers, notes internes, étapes de mission…) **ne sont jamais publiés**. Le **studio et l'API ne sont accessibles que depuis ton PC** : les joueurs ne peuvent rien modifier.
+---
 
-Réseau : les joueurs doivent être sur le même réseau (maison, LAN, Wi-Fi). Pour Internet, redirige le port dans ton routeur ou utilise un tunnel (Tailscale, ngrok…).
+## 🔐 Réseau & sécurité
+
+- Les autres PC de ton réseau ouvrent l'adresse affichée dans la fenêtre du serveur (ex. `http://192.168.1.23:8765/`). Pour Internet : redirige le port dans ton routeur ou utilise un tunnel (Tailscale, Cloudflare Tunnel…).
+- Mots de passe **hachés** (PBKDF2-SHA256, 200 000 itérations, sel aléatoire), session par cookie `HttpOnly`, protection contre les requêtes intersites, limite de tentatives de connexion.
+- Chaque créateur ne voit que **ses** projets et médias. Un aperçu en attente n'est visible que par son créateur et les administrateurs.
+- **Mot de passe oublié** : l'admin en attribue un nouveau dans *Administration → Comptes*. Pour le compte admin lui-même : `DevPortals.bat --reset-password NOM` (ou `./lancer.sh --reset-password NOM`) dans le dossier de DevPortals.
 
 ---
 
 ## 💾 Données & sauvegardes
 
-- Les projets sont stockés dans le navigateur (IndexedDB) **et sauvegardés automatiquement sur le disque** dans le dossier `sauvegardes/` (toutes les 10 min par défaut, les 30 dernières sont gardées). Restauration en un clic dans *Paramètres & données*.
-- Export / import manuel en `.json` (médias inclus) pour changer d'ordinateur. Les exports de l'ancienne version (GameForge) s'importent aussi.
-- Le portail publié se trouve dans `portail-data/`.
+- Tout est dans le dossier **`donnees/`** (comptes, projets, médias, portails). **Sauvegarder ce dossier = tout sauvegarder.**
+- Chaque projet est enregistré sur le serveur à chaque modification, avec un **historique des versions** (une version toutes les 10 minutes de travail, les 30 dernières) restaurable dans *Compte & paramètres*.
+- Export / import `.json` (médias inclus) pour déplacer un jeu. Les exports des anciennes versions (DevPortals v2, GameForge) s'importent aussi.
+- **Mise à jour depuis l'ancienne version** : les projets restés dans le navigateur sont détectés à la première connexion et peuvent être **importés dans ton compte** en un clic.
+- Les projets et comptes supprimés sont déplacés dans `donnees/corbeille/` (jamais effacés directement).
 
 ---
 
 ## 📁 Structure
 
 ```
-DevPortals.bat          Lanceur Windows (serveur PowerShell)
-lancer.sh               Lanceur macOS / Linux (serveur Python)
-serveur/server.ps1      Serveur local Windows (aucune installation)
-serveur/server.py       Serveur local Python 3
-studio/                 L'application (HTML / CSS / JavaScript, sans dépendance)
-portail/                Le site public des joueurs
-portail-data/           (généré) contenu publié du portail
-sauvegardes/            (généré) sauvegardes automatiques
+DevPortals.bat          Lanceur Windows (Python auto-installé en version portable si absent)
+lancer.sh               Lanceur macOS / Linux
+serveur/server.py       Serveur de la plateforme (Python, bibliothèque standard uniquement)
+hub/                    Catalogue public + connexion / inscription
+studio/                 Le studio (HTML / CSS / JavaScript, sans dépendance)
+portail/                Le mini-site d'un jeu (servi à /g/<nom>/)
+donnees/                (généré) comptes, projets, médias, portails
+runtime/                (généré) Python portable pour Windows
 ```
 
 ---
 
 ## 🇬🇧 English
 
-**DevPortals** is a studio to design your video game and share it with players — no AI, no install, no account.
-Ideas (5-star ratings, notes, reflection cards), a guided GDD with templates and Markdown/HTML/PDF export, story chapters and an appearance timeline, complete sheets for **characters, vehicles, locations, items, factions, quests, dialogue, lore, music (with audio files), assets, bugs, playtests and team**, interactive **world maps**, art direction (palette, moodboard), media library, kanban + milestones, screenshot builds with a before/after slider, devlog & patch notes, a toolbox (idea/name generators, checklists, XP curve, dice), global search (Ctrl+K), trash, templates and automatic disk backups.
+**DevPortals** is a self-hosted platform to design video games and share them with players — no AI, no external service.
 
-The **player portal** is a website served from your PC: mark items as *Public*, click *Publish*, and players on your network open the displayed address to see news, updates, roadmap, sheets, music, maps and gallery, with **NEW** badges since their last visit. Private fields (🔒) are never published; the studio and API only answer on your own PC.
-
-Run **`DevPortals.bat`** (Windows) or **`./lancer.sh`** (macOS / Linux, Python 3). French by default, English via the **FR / EN** toggle.
+- **Accounts**: the first launch creates the **administrator** account (only from the host PC). Creators sign up from the catalog (or get an account from the admin) and unlock their **studio** with **unlimited games**. Logged-out visitors only see the public catalog and approved game portals.
+- **Studio**: ideas (5-star ratings, notes), a guided GDD with templates and Markdown/HTML/PDF export, story chapters, complete sheets for **characters, vehicles, locations, items, factions, quests, dialogue, lore, music (audio files), assets, bugs, playtests and team**, interactive world maps, art direction, media library, kanban + milestones, screenshot builds with a before/after slider, devlog & patch notes, toolbox, global search (Ctrl+K), trash and version history.
+- **Publishing**: in *Portal & catalog*, classify the game (genres, visual style, modes, platforms, keywords) and **submit for review**. The admin previews it, then **approves** or **rejects with a message**. Approved games appear in the **public catalog** (featured row, search, filters by genre / style / mode / platform / stage, NEW badges, creator profiles) at `/g/<game>/`. Updates stay pending while the live version remains online.
+- **Admin panel**: review queue, all portals (feature, remove), accounts (create, role, disable, reset password, delete), platform settings (name, open registration, mandatory review).
+- **Run** `DevPortals.bat` on Windows — it downloads the official portable Python once (SHA-256 verified) if Python is missing — or `./lancer.sh` on macOS / Linux. All data lives in `donnees/`. French by default, English via **FR / EN**.

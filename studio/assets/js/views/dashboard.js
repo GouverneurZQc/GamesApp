@@ -38,7 +38,6 @@
       const days = upcoming ? U.daysUntil(upcoming.date) : null;
       const doing = p.tasks.filter((t) => t.status === 'doing').concat(p.tasks.filter((t) => t.status === 'todo' && t.priority === 'high')).slice(0, 6);
       const publicCount = SC.PORTAL_TYPES.reduce((n, t) => n + p.entities[t].filter((e) => e.public).length, 0) + p.devlog.posts.filter((x) => x.public).length + p.devlog.patches.filter((x) => x.public).length;
-      const needBackup = !DP.server.online && (Date.now() - (S.settings.lastBackup || 0)) > 7 * 864e5 && (p.ideas.length + SC.ENTITY_ORDER.reduce((n, t) => n + p.entities[t].length, 0)) > 3;
       const pool = DP.toolboxData.QUESTIONS;
       let q = U.pick(pool);
 
@@ -63,12 +62,6 @@
           </div>
         </div>
 
-        ${DP.server.online ? '' : `
-        <div class="banner">${UI.icon('server')}
-          <div><strong>${T('Serveur local non lancé', 'Local server not running')}</strong> — ${T('ouvre DevPortals avec DevPortals.bat pour activer le portail joueurs et la sauvegarde automatique sur ton disque.', 'open DevPortals with DevPortals.bat to enable the player portal and automatic backups to your disk.')}</div>
-          <a class="btn sm" href="#/portal">${T('En savoir plus', 'Learn more')}</a></div>`}
-        ${needBackup ? `<div class="banner warn">${UI.icon('save')}<div><strong>${T('Pense à sauvegarder', 'Remember to back up')}</strong> — ${T('exporte ton projet dans un fichier.', 'export your project to a file.')}</div><button class="btn sm" id="backupBtn">${UI.icon('download')} ${T('Exporter', 'Export')}</button></div>` : ''}
-
         <div class="stats">${stats.map((s) => `<a class="stat" href="#/${s.route}">${UI.icon(s.icon)}<strong>${s.n}</strong><span>${U.esc(L(s.label))}</span>${s.pct != null ? `<i class="bar"><b style="width:${s.pct}%"></b></i>` : ''}</a>`).join('')}</div>
 
         <div class="grid3">
@@ -85,10 +78,10 @@
               : `<p class="muted">${T('Aucun jalon à venir.', 'No upcoming milestone.')}</p>`}
           </div>
           <div class="card">
-            <div class="card-head"><h3>${UI.icon('rocket')} ${T('Portail joueurs', 'Player portal')}</h3><a class="link small" href="#/portal">${T('Gérer →', 'Manage →')}</a></div>
+            <div class="card-head"><h3>${UI.icon('rocket')} ${T('Portail du jeu', 'Game portal')}</h3><a class="link small" href="#/portal">${T('Gérer →', 'Manage →')}</a></div>
             <p><strong>${publicCount}</strong> <span class="muted">${T('élément(s) public(s)', 'public item(s)')}</span></p>
-            <p class="muted small">${p.portal.lastPublished ? T(`Publié ${U.relTime(p.portal.lastPublished)}`, `Published ${U.relTime(p.portal.lastPublished)}`) : T('Jamais publié', 'Never published')}${p.portal.dirty && p.portal.lastPublished ? ` · <span class="tag warn">${T('changements non publiés', 'unpublished changes')}</span>` : ''}</p>
-            ${DP.server.online && DP.server.info ? `<a class="btn sm" href="/" target="_blank">${UI.icon('globe')} ${T('Voir le portail', 'View portal')}</a>` : ''}
+            <p class="muted small" id="dashPortal">${p.portal.lastPublished ? T(`Envoyé ${U.relTime(p.portal.lastPublished)}`, `Sent ${U.relTime(p.portal.lastPublished)}`) : T('Jamais envoyé', 'Never sent')}${p.portal.dirty && p.portal.lastPublished ? ` · <span class="tag warn">${T('changements non envoyés', 'unsent changes')}</span>` : ''}</p>
+            <div id="dashPortalBtn"></div>
           </div>
         </div>
 
@@ -123,6 +116,13 @@
         const ids = await UI.pickImages({ title: T('Image de couverture', 'Cover image') });
         if (ids && ids[0]) { m.cover = ids[0]; S.touch(); DP.app.route(); }
       };
+      DP.server.portal(p.id).then(({ portal }) => {
+        const box = el.querySelector('#dashPortal');
+        if (!portal || !box || S.project !== p) return;
+        const stl = DP.portalStatus(portal.status);
+        box.insertAdjacentHTML('afterbegin', `<span class="tag ${stl.cls}">${U.esc(stl.label)}</span> `);
+        if (portal.live) el.querySelector('#dashPortalBtn').innerHTML = `<a class="btn sm" href="/g/${U.esc(portal.slug)}/" target="_blank">${UI.icon('globe')} ${T('Voir le portail', 'View portal')}</a>`;
+      }).catch(() => {});
       const bk = el.querySelector('#backupBtn');
       if (bk) bk.onclick = async () => { await S.exportProject(); DP.app.route(); };
       el.querySelector('#qSave').onclick = () => {

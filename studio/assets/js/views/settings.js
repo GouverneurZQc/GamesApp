@@ -1,25 +1,44 @@
-/* Vue : paramètres, sauvegardes, corbeille, projets */
+/* Vue : compte, paramètres, historique des versions, projets, corbeille */
 (function () {
   const U = DP.util, S = DP.store, UI = DP.ui, SC = DP.schemas;
 
+  const ROLE = { admin: ['Administrateur', 'Administrator'], user: ['Créateur', 'Creator'] };
+
   DP.views.settings = {
-    title: () => T('Paramètres & données', 'Settings & data'),
+    title: () => T('Compte & paramètres', 'Account & settings'),
     async render(el) {
-      const st = S.settings, p = S.project;
-      await DP.server.check();
-      DP.app.updateServerDot();
-      let usage = '';
-      try {
-        if (navigator.storage && navigator.storage.estimate) {
-          const e = await navigator.storage.estimate();
-          usage = `${U.fmtSize(e.usage || 0)} ${T('utilisés dans le navigateur', 'used in the browser')}`;
-        }
-      } catch (e) { /* ignore */ }
-      let backups = [];
-      if (DP.server.online) { try { backups = (await DP.server.listBackups()).filter((b) => b.name.startsWith(`${U.slug(p.name)}__`)); } catch (e) { /* ignore */ } }
+      const st = S.settings, p = S.project, me = S.user;
+      let versions = [], legacy = [];
+      try { versions = await DP.server.versions(p.id); } catch (e) { /* ignore */ }
+      try { legacy = await DP.legacy.projects(); } catch (e) { /* ignore */ }
 
       el.innerHTML = `
         <div class="settings">
+          <div class="card">
+            <div class="card-head"><h3>${UI.icon('user')} ${T('Mon compte', 'My account')}</h3>
+              <button class="btn sm ghost" id="logout">${UI.icon('logout')} ${T('Se déconnecter', 'Log out')}</button></div>
+            <div class="account-row">
+              <div class="acc-avatar">${U.esc((me.displayName || me.username).slice(0, 1).toUpperCase())}</div>
+              <div class="grow">
+                <strong>${U.esc(me.displayName)}</strong> <span class="tag ${me.role === 'admin' ? 'pub' : ''}">${U.esc(L(ROLE[me.role] || ROLE.user))}</span>
+                <p class="muted small">@${U.esc(me.username)} · ${T('membre depuis', 'member since')} ${U.fmtDay(new Date(me.createdAt).toISOString().slice(0, 10))}</p>
+              </div>
+            </div>
+            <div class="fields">
+              <label class="field"><span class="lbl">${T('Nom affiché', 'Display name')}</span><input class="input" id="accName" maxlength="40" value="${U.esc(me.displayName)}"></label>
+              <label class="field wide"><span class="lbl">${T('Présentation (visible sur ton profil public)', 'About you (shown on your public profile)')}</span><textarea class="input auto" id="accBio" rows="2" maxlength="500" placeholder="${T('ex. Dev solo, passionné de jeux de course…', 'e.g. Solo dev who loves racing games…')}">${U.esc(me.bio || '')}</textarea></label>
+            </div>
+            <div class="row gap wrap"><button class="btn" id="accSave">${UI.icon('save')} ${T('Enregistrer le profil', 'Save profile')}</button>
+              <a class="btn ghost" href="/#/createur/${encodeURIComponent(me.username)}" target="_blank">${UI.icon('eye')} ${T('Voir mon profil public', 'View my public profile')}</a></div>
+            <div class="sep"></div>
+            <h4>${T('Changer le mot de passe', 'Change password')}</h4>
+            <div class="row gap wrap">
+              <input class="input" type="password" id="pwOld" autocomplete="current-password" placeholder="${T('Mot de passe actuel', 'Current password')}" style="max-width:250px">
+              <input class="input" type="password" id="pwNew" autocomplete="new-password" placeholder="${T('Nouveau (6 caractères min.)', 'New (6 characters min.)')}" style="max-width:250px">
+              <button class="btn" id="pwSave">${UI.icon('shield')} ${T('Modifier', 'Change')}</button>
+            </div>
+          </div>
+
           <div class="card">
             <h3>${UI.icon('globe')} ${T('Général', 'General')}</h3>
             <div class="row gap wrap">
@@ -31,27 +50,28 @@
           </div>
 
           <div class="card">
-            <h3>${UI.icon('save')} ${T('Sauvegardes sur le disque', 'Backups on disk')}</h3>
-            ${DP.server.online ? `
-              <p class="muted small">${T('Les sauvegardes sont écrites dans le dossier « sauvegardes » à côté de DevPortals (les 30 plus récentes par projet sont conservées).', 'Backups are written to the "sauvegardes" folder next to DevPortals (the 30 most recent per project are kept).')}</p>
-              <div class="row gap wrap">
-                <label class="check"><input type="checkbox" id="autoBk" ${st.autoBackup ? 'checked' : ''}> ${T('Sauvegarde automatique toutes les', 'Automatic backup every')}</label>
-                <select class="input" id="bkEvery" style="width:auto">${[5, 10, 15, 30, 60].map((m) => `<option value="${m}" ${st.backupEvery === m ? 'selected' : ''}>${m} min</option>`).join('')}</select>
-                <button class="btn primary" id="bkNow">${UI.icon('save')} ${T('Sauvegarder maintenant', 'Back up now')}</button>
-                <button class="btn ghost" id="bkOpen">${UI.icon('folder')} ${T('Ouvrir le dossier', 'Open folder')}</button>
-              </div>
-              <div class="backup-list">${backups.length ? backups.slice(0, 12).map((b) => `<div class="proj-item"><span class="grow">${UI.icon('archive')} ${U.esc(b.name)}</span><small class="muted">${U.fmtDate(b.time)} · ${U.fmtSize(b.size)}</small><button class="btn sm ghost" data-restore="${U.esc(b.name)}">${UI.icon('refresh')} ${T('Restaurer comme copie', 'Restore as copy')}</button></div>`).join('')
-                : `<p class="muted small">${T('Aucune sauvegarde pour ce projet pour l\'instant.', 'No backup for this project yet.')}</p>`}</div>`
-              : `<div class="banner warn">${UI.icon('server')}<div>${T('Lance DevPortals avec DevPortals.bat pour activer la sauvegarde automatique sur le disque. En attendant, exporte ton projet régulièrement.', 'Start DevPortals with DevPortals.bat to enable automatic backups to disk. Meanwhile, export your project regularly.')}</div></div>`}
+            <h3>${UI.icon('clock')} ${T('Historique des versions', 'Version history')} <span class="muted small">${U.esc(p.name)}</span></h3>
+            <p class="muted small">${T('Tes projets sont enregistrés sur le serveur à chaque modification. Une version est gardée automatiquement toutes les 10 minutes de travail (les 30 dernières par projet).', 'Your projects are saved on the server on every change. A version is kept automatically every 10 minutes of work (the last 30 per project).')}</p>
+            <div class="backup-list">${versions.length ? versions.slice(0, 30).map((v) => `<div class="proj-item"><span class="grow">${UI.icon('archive')} ${U.esc(U.fmtDate(v.time))}</span><small class="muted">${U.relTime(v.time)} · ${U.fmtSize(v.size)}</small><button class="btn sm ghost" data-restore="${U.esc(v.name)}">${UI.icon('refresh')} ${T('Revenir à cette version', 'Restore this version')}</button></div>`).join('')
+              : `<p class="muted small">${T('Pas encore de version précédente pour ce projet.', 'No previous version for this project yet.')}</p>`}</div>
             <div class="sep"></div>
-            <p class="muted small">${usage} · ${T('Dernière sauvegarde', 'Last backup')} : ${st.lastBackup ? U.fmtDate(st.lastBackup) : T('jamais', 'never')}</p>
             <div class="row gap wrap">
               <button class="btn" id="dExp">${UI.icon('download')} ${T('Exporter ce projet (.json)', 'Export this project (.json)')}</button>
-              <button class="btn" id="dExpAll">${UI.icon('download')} ${T('Exporter tous les projets', 'Export all projects')}</button>
+              <button class="btn" id="dExpAll">${UI.icon('download')} ${T('Exporter tous mes projets', 'Export all my projects')}</button>
               <button class="btn" id="dImp">${UI.icon('upload')} ${T('Importer une sauvegarde', 'Import a backup')}</button>
               <button class="btn" id="dMd">${UI.icon('file')} ${T('Exporter le GDD (.md)', 'Export GDD (.md)')}</button>
             </div>
           </div>
+
+          ${legacy.length ? `
+          <div class="card">
+            <h3>${UI.icon('archive')} ${T('Anciens projets trouvés dans ce navigateur', 'Old projects found in this browser')}</h3>
+            <p class="muted small">${T('Ces projets viennent de l\'ancienne version de DevPortals (sans compte). Importe-les dans ton compte pour les retrouver partout.', 'These projects come from the previous DevPortals version (no account). Import them into your account to find them everywhere.')}</p>
+            <div class="proj-list">${legacy.map((x) => `<label class="proj-item"><input type="checkbox" data-leg="${U.esc(x.id)}" checked><span class="grow"><strong>${U.esc(x.name)}</strong> <small class="muted">${U.relTime(x.updatedAt)}</small></span></label>`).join('')}</div>
+            <div class="row gap wrap"><button class="btn primary" id="legImport">${UI.icon('upload')} ${T('Importer dans mon compte', 'Import into my account')}</button>
+              <button class="btn ghost danger-text" id="legDelete">${UI.icon('trash')} ${T('Effacer du navigateur', 'Erase from the browser')}</button></div>
+            <div id="legStatus"></div>
+          </div>` : ''}
 
           <div class="card">
             <h3>${UI.icon('folder')} ${T('Projets', 'Projects')}</h3>
@@ -80,23 +100,55 @@
 
       el.querySelectorAll('#sLang [data-v]').forEach((b) => { b.onclick = async () => { st.lang = DP.lang = b.dataset.v; await S.saveSettings(); DP.app.renderShell(); DP.app.route(); }; });
       el.querySelectorAll('[data-acc]').forEach((b) => { b.onclick = async () => { st.accent = b.dataset.acc; await S.saveSettings(); DP.app.applyAccent(); el.querySelectorAll('[data-acc]').forEach((x) => x.classList.toggle('on', x === b)); S.touch(); }; });
-
-      if (DP.server.online) {
-        el.querySelector('#autoBk').onchange = (e) => { st.autoBackup = e.target.checked; S.saveSettings(); };
-        el.querySelector('#bkEvery').onchange = (e) => { st.backupEvery = +e.target.value; S.saveSettings(); };
-        el.querySelector('#bkNow').onclick = async () => { await DP.backup.now(); DP.app.route(); };
-        el.querySelector('#bkOpen').onclick = () => DP.server.openFolder('backups').catch((e) => UI.toast(e.message, 'error'));
-        el.querySelectorAll('[data-restore]').forEach((b) => {
-          b.onclick = async () => {
-            try {
-              const txt = await DP.server.getBackup(b.dataset.restore);
-              await S.importText(txt);
-              UI.toast(T('Sauvegarde restaurée comme nouveau projet', 'Backup restored as a new project'), 'success');
-              DP.app.renderShell(); DP.app.go('dashboard');
-            } catch (e) { UI.toast(e.message, 'error'); }
-          };
-        });
-      }
+      el.querySelector('#logout').onclick = () => DP.app.logout();
+      el.querySelector('#accSave').onclick = async () => {
+        try {
+          const r = await DP.api('/api/me/profile', { method: 'POST', body: { displayName: el.querySelector('#accName').value, bio: el.querySelector('#accBio').value } });
+          Object.assign(S.user, r.user);
+          UI.toast(T('Profil enregistré', 'Profile saved'), 'success');
+          DP.app.renderShell(); DP.app.route();
+        } catch (e) { UI.toast(e.message, 'error'); }
+      };
+      el.querySelector('#pwSave').onclick = async () => {
+        try {
+          await DP.api('/api/me/password', { method: 'POST', body: { current: el.querySelector('#pwOld').value, password: el.querySelector('#pwNew').value } });
+          el.querySelector('#pwOld').value = el.querySelector('#pwNew').value = '';
+          UI.toast(T('Mot de passe modifié. Tes autres sessions ont été déconnectées.', 'Password changed. Your other sessions were logged out.'), 'success', 5000);
+        } catch (e) { UI.toast(e.message, 'error'); }
+      };
+      el.querySelectorAll('[data-restore]').forEach((b) => {
+        b.onclick = async () => {
+          if (!(await UI.confirm(T('Revenir à cette version du projet ? L\'état actuel est gardé dans l\'historique, tu pourras y revenir.', 'Go back to this version of the project? The current state is kept in the history, so you can come back to it.')))) return;
+          try {
+            await S.saveNow();
+            await DP.server.restoreVersion(p.id, b.dataset.restore);
+            await S.reload();
+            UI.toast(T('Version restaurée', 'Version restored'), 'success');
+            DP.app.renderShell(); DP.app.route();
+          } catch (e) { UI.toast(e.message, 'error'); }
+        };
+      });
+      const legSel = () => legacy.filter((x) => { const c = el.querySelector(`[data-leg="${CSS.escape(x.id)}"]`); return c && c.checked; });
+      const li = el.querySelector('#legImport');
+      if (li) li.onclick = async () => {
+        const list = legSel();
+        if (!list.length) return;
+        const box = el.querySelector('#legStatus');
+        li.disabled = true;
+        try {
+          const n = await S.importLegacy(list, (i, tot, name) => { box.innerHTML = UI.spinner(T(`Import ${i}/${tot} : ${name}…`, `Importing ${i}/${tot}: ${name}…`)); });
+          UI.toast(T(`${n} projet(s) importé(s) dans ton compte`, `${n} project(s) imported into your account`), 'success');
+          DP.app.renderShell(); DP.app.route();
+        } catch (e) { box.innerHTML = `<div class="banner warn">${UI.icon('alert')}<div>${U.esc(e.message)}</div></div>`; li.disabled = false; }
+      };
+      const ld = el.querySelector('#legDelete');
+      if (ld) ld.onclick = async () => {
+        const list = legSel();
+        if (!list.length) return;
+        if (!(await UI.confirm(T(`Effacer ${list.length} ancien(s) projet(s) de ce navigateur ? Vérifie d'abord qu'ils sont bien importés.`, `Erase ${list.length} old project(s) from this browser? Check first that they were imported.`), { danger: true }))) return;
+        for (const x of list) await DP.legacy.removeProject(x.id);
+        DP.app.route();
+      };
       el.querySelector('#dExp').onclick = async () => { await S.exportProject(); UI.toast(T('Projet exporté', 'Project exported'), 'success'); DP.app.route(); };
       el.querySelector('#dExpAll').onclick = async () => { await S.exportAll(); UI.toast(T('Sauvegarde complète exportée', 'Full backup exported'), 'success'); DP.app.route(); };
       el.querySelector('#dMd').onclick = () => DP.exporter.markdown();
@@ -116,14 +168,14 @@
           const it = S.list.find((x) => x.id === b.dataset.ren);
           const name = await UI.ask(T('Renommer le projet', 'Rename project'), { value: it.name });
           if (!name) return;
-          if (it.id === p.id) { p.name = name; await S.saveNow(); } else { const pr = await DP.db.get('projects', it.id); pr.name = name; await DP.db.put('projects', pr); }
+          try { await S.rename(it.id, name); } catch (e) { UI.toast(e.message, 'error'); }
           await S.refreshList(); DP.app.renderShell(); DP.app.route();
         };
       });
       el.querySelectorAll('[data-del]').forEach((b) => {
         b.onclick = async () => {
           const it = S.list.find((x) => x.id === b.dataset.del);
-          if (!(await UI.confirm(T(`Supprimer définitivement le projet « ${it.name} » et tous ses médias ? Exporte-le avant.`, `Permanently delete project "${it.name}" and all its media? Export it first.`), { danger: true, ok: T('Supprimer', 'Delete') }))) return;
+          if (!(await UI.confirm(T(`Supprimer le projet « ${it.name} », ses médias et son portail ? (Une copie est gardée dans la corbeille du serveur.)`, `Delete project "${it.name}", its media and its portal? (A copy is kept in the server trash.)`), { danger: true, ok: T('Supprimer', 'Delete') }))) return;
           await S.remove(it.id);
           DP.app.renderShell(); DP.app.route();
           UI.toast(T('Projet supprimé', 'Project deleted'), 'success');
@@ -142,16 +194,16 @@
 - **Ctrl+K** : rechercher partout (fiches, idées, chapitres, GDD, devlog, tâches…).
 - **Alt+N** : capturer une idée depuis n'importe quel écran.
 - **Ctrl+V** : coller une capture d'écran dans une fiche, une idée, le moodboard ou les captures.
-- **Portail joueurs** : rends des fiches, articles, versions, jalons, cartes et médias **publics**, puis clique sur *Publier*. Les joueurs de ton réseau le voient à l'adresse affichée dans *Portail joueurs*.
+- **Portail & catalogue** : rends des fiches, articles, versions, jalons, cartes et médias **publics**, choisis genres et styles, puis clique sur *Soumettre pour validation*. Une fois approuvé par l'administration, ton jeu apparaît dans le catalogue public.
 - **🔒** : les champs marqués d'un cadenas (secrets, spoilers, notes internes) ne sont jamais publiés.
 - **Corbeille** : tout ce qui est supprimé peut être restauré ici.
-- **Sauvegardes** : avec DevPortals.bat, ton projet est sauvegardé automatiquement dans le dossier *sauvegardes*.`;
+- **Sauvegardes** : tout est enregistré dans ton compte sur le serveur, avec un historique des versions ci-dessus. Exporte en .json pour garder une copie ailleurs.`;
   const HELP_EN = `
 - **Ctrl+K**: search everything (sheets, ideas, chapters, GDD, devlog, tasks…).
 - **Alt+N**: capture an idea from any screen.
 - **Ctrl+V**: paste a screenshot into a sheet, an idea, the moodboard or captures.
-- **Player portal**: make sheets, posts, versions, milestones, maps and media **public**, then click *Publish*. Players on your network see it at the address shown in *Player portal*.
+- **Portal & catalog**: make sheets, posts, versions, milestones, maps and media **public**, pick genres and styles, then click *Submit for review*. Once approved by the administration, your game appears in the public catalog.
 - **🔒**: fields marked with a lock (secrets, spoilers, internal notes) are never published.
 - **Trash**: anything deleted can be restored here.
-- **Backups**: with DevPortals.bat, your project is backed up automatically to the *sauvegardes* folder.`;
+- **Backups**: everything is saved in your account on the server, with a version history above. Export to .json to keep a copy elsewhere.`;
 })();

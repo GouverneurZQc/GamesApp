@@ -1,16 +1,17 @@
-/* DevPortals — état, projets, corbeille, sauvegardes, import/export */
+/* DevPortals — état, projets (stockés dans le compte sur le serveur), corbeille, import/export */
 (function () {
-  const U = DP.util, DB = DP.db, SC = DP.schemas;
+  const U = DP.util, API = DP.api, SC = DP.schemas;
 
   const DEFAULT_SETTINGS = {
     lang: 'fr',
     accent: 'violet',
     currentProject: null,
-    lastBackup: 0,
-    autoBackup: true, // sauvegarde automatique sur le disque (via le serveur local)
-    backupEvery: 10, // minutes
     navCollapsed: {},
+    legacyChecked: false, // anciennes données du navigateur déjà proposées à l'import
   };
+  const LANG_KEY = 'dp_lang';
+  const getLang = () => { try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; } };
+  const setLang = (l) => { try { localStorage.setItem(LANG_KEY, l); } catch (e) { /* ignore */ } };
 
   function deepDefaults(target, defs) {
     for (const k of Object.keys(defs)) {
@@ -48,7 +49,8 @@
       portal: {
         title: '', tagline: '', about: '', hero: '', lang: 'fr', links: [], faq: [],
         sections: { news: true, patches: true, roadmap: true, gallery: true, maps: true, story: false, ...Object.fromEntries(SC.PORTAL_TYPES.map((t) => [t, true])) },
-        showNew: true, autoPublish: false, lastPublished: 0, storyTeaser: '',
+        showNew: true, lastPublished: 0, storyTeaser: '',
+        catalog: { genres: [], styles: [], tags: [] },
       },
       checklists: {},
       trash: [],
@@ -64,43 +66,50 @@
     for (const k of SC.ENTITY_ORDER) if (!Array.isArray(p.entities[k])) p.entities[k] = [];
     p.ideas.forEach((i) => { i.notes = i.notes || []; i.scores = i.scores || {}; i.images = i.images || []; });
     p.tasks.forEach((t) => { if (!t.status) t.status = 'todo'; });
+    delete p.portal.autoPublish;
     return p;
   }
 
+  let saving = null, again = false, rev = 0;
+
   const S = (DP.store = {
     settings: U.clone(DEFAULT_SETTINGS),
+    user: null,
     project: null,
     list: [],
     saveState: 'saved',
-    dirtySinceBackup: false,
 
-    async init() {
-      await DB.open();
-      const saved = await DB.get('kv', 'settings');
-      // Français par défaut ; l'anglais se choisit dans la barre latérale ou les paramètres
-      if (saved) S.settings = deepDefaults(saved, DEFAULT_SETTINGS);
-      DP.lang = S.settings.lang;
-      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* ignore */ }
+    async init(user) {
+      S.user = user;
+      S.settings = deepDefaults(U.clone(user.settings || {}), DEFAULT_SETTINGS);
+      // Français par défaut ; la langue choisie est gardée sur cet appareil (partagée avec le catalogue)
+      S.settings.lang = DP.lang = getLang() === 'en' ? 'en' : 'fr';
       await S.refreshList();
-      let id = S.settings.currentProject;
+      const wanted = new URLSearchParams(location.search).get('projet');
+      let id = wanted && S.list.find((x) => x.id === wanted) ? wanted : S.settings.currentProject;
+      if (wanted) history.replaceState(null, '', location.pathname + location.hash);
       if (!id || !S.list.find((x) => x.id === id)) id = S.list[0] && S.list[0].id;
       if (id) await S.open(id);
       else await S.create(T('Mon jeu', 'My game'));
     },
 
     async refreshList() {
-      const all = await DB.all('projects');
-      S.list = all.map((p) => ({ id: p.id, name: p.name, updatedAt: p.updatedAt })).sort((a, b) => b.updatedAt - a.updatedAt);
+      S.list = await API('/api/projects');
       return S.list;
     },
 
-    async saveSettings() { await DB.put('kv', S.settings, 'settings'); },
+    _saveSettings: U.debounce(() => API('/api/me/settings', { method: 'PUT', body: S.settings }).catch((e) => console.warn(e)), 400),
+    async saveSettings() {
+      DP.lang = S.settings.lang;
+      setLang(S.settings.lang);
+      S._saveSettings();
+    },
 
     async create(name, template) {
       if (S.project) await S.saveNow();
       const p = blankProject(name);
       if (template && template.apply) template.apply(p);
-      await DB.put('projects', p);
+      await API(`/api/projects/${p.id}`, { method: 'PUT', body: p });
       S.project = p;
       S.settings.currentProject = p.id;
       await S.saveSettings();
@@ -108,20 +117,25 @@
       return p;
     },
 
-    async open(id) {
-      if (S.project && S.project.id !== id) await S.saveNow();
-      const p = await DB.get('projects', id);
-      if (!p) throw new Error('Project not found');
+    async open(id, { skipSave = false } = {}) {
+      if (!skipSave && S.project && S.project.id !== id) await S.saveNow();
+      const p = await API(`/api/projects/${encodeURIComponent(id)}`);
       S.project = normalize(p);
       S.settings.currentProject = id;
       await S.saveSettings();
+      DP.media.listByProject(id).catch(() => {}); // noms et tailles des médias
       return S.project;
     },
 
+    /** Recharge le projet depuis le serveur (après une restauration) */
+    async reload() {
+      rev++;
+      await S.open(S.project.id, { skipSave: true });
+      S.setSaveState('saved');
+    },
+
     async remove(id) {
-      const med = await DP.media.listByProject(id);
-      for (const m of med) await DP.media.remove(m.id);
-      await DB.del('projects', id);
+      await API(`/api/projects/${encodeURIComponent(id)}`, { method: 'DELETE' });
       await S.refreshList();
       if (S.project && S.project.id === id) {
         S.project = null;
@@ -130,28 +144,44 @@
       }
     },
 
+    async rename(id, name) {
+      if (S.project && S.project.id === id) { S.project.name = name; S.touch(); await S.saveNow(); return; }
+      const p = await API(`/api/projects/${encodeURIComponent(id)}`);
+      p.name = name;
+      await API(`/api/projects/${encodeURIComponent(id)}`, { method: 'PUT', body: p });
+      await S.refreshList();
+    },
+
     /** Marque le projet comme modifié et planifie la sauvegarde */
     touch() {
       if (!S.project) return;
       S.project.updatedAt = Date.now();
-      S.dirtySinceBackup = true;
+      rev++;
       S.setSaveState('saving');
       S._saveDebounced();
       if (DP.publisher) DP.publisher.onChange();
     },
 
+    /** Enregistre le projet sur le serveur (les appels se suivent, jamais en parallèle) */
     async saveNow() {
       if (!S.project) return;
-      try {
-        await DB.put('projects', S.project);
-        S.setSaveState('saved');
-        const it = S.list.find((x) => x.id === S.project.id);
-        if (it) { it.name = S.project.name; it.updatedAt = S.project.updatedAt; }
-      } catch (e) {
-        console.error(e);
-        S.setSaveState('error');
-        DP.ui && DP.ui.toast(T('Erreur de sauvegarde : ', 'Save error: ') + e.message, 'error');
-      }
+      if (saving) { again = true; return saving; }
+      const p = S.project, myRev = rev;
+      saving = (async () => {
+        try {
+          await API(`/api/projects/${p.id}`, { method: 'PUT', body: p });
+          if (rev === myRev || S.project !== p) S.setSaveState('saved');
+          const it = S.list.find((x) => x.id === p.id);
+          if (it) { it.name = p.name; it.updatedAt = p.updatedAt; }
+        } catch (e) {
+          console.error(e);
+          S.setSaveState('error');
+          DP.ui && DP.ui.toast(T('Erreur de sauvegarde : ', 'Save error: ') + e.message, 'error');
+          if (S.project === p) setTimeout(() => { if (S.saveState === 'error') S._saveDebounced(); }, 15000);
+        } finally { saving = null; }
+      })();
+      await saving;
+      if (again) { again = false; return S.saveNow(); }
     },
 
     setSaveState(st) {
@@ -159,7 +189,7 @@
       const el = document.getElementById('saveState');
       if (el) {
         el.dataset.state = st;
-        el.textContent = st === 'saving' ? T('Enregistrement…', 'Saving…') : st === 'error' ? T('Erreur', 'Error') : T('Enregistré', 'Saved');
+        el.textContent = st === 'saving' ? T('Enregistrement…', 'Saving…') : st === 'error' ? T('Non enregistré', 'Not saved') : T('Enregistré', 'Saved');
       }
     },
 
@@ -247,7 +277,10 @@
     async exportProjectData(p) {
       const med = await DP.media.listByProject(p.id);
       const media = [];
-      for (const m of med) media.push({ id: m.id, name: m.name, type: m.type, kind: m.kind, w: m.w, h: m.h, dataURL: await U.blobToDataURL(m.blob) });
+      for (const m of med) {
+        const rec = await DP.media.get(m.id);
+        if (rec) media.push({ id: m.id, name: m.name, type: rec.type, kind: m.kind, w: m.w, h: m.h, dataURL: await U.blobToDataURL(rec.blob) });
+      }
       return { format: 'devportals-project', version: 2, exportedAt: Date.now(), project: p, media };
     },
 
@@ -258,18 +291,16 @@
 
     async exportProject() {
       U.download(`${U.slug(S.project.name)}-devportals.json`, await S.projectJSON(), 'application/json');
-      S.settings.lastBackup = Date.now();
-      await S.saveSettings();
     },
 
     async exportAll() {
       await S.saveNow();
-      const all = await DB.all('projects');
       const projects = [];
-      for (const p of all) projects.push(await S.exportProjectData(p));
+      for (const it of S.list) {
+        const p = it.id === S.project.id ? S.project : await API(`/api/projects/${encodeURIComponent(it.id)}`);
+        projects.push(await S.exportProjectData(p));
+      }
       U.download(`devportals-sauvegarde-${U.today()}.json`, JSON.stringify({ format: 'devportals-backup', version: 2, exportedAt: Date.now(), projects }), 'application/json');
-      S.settings.lastBackup = Date.now();
-      await S.saveSettings();
     },
 
     async importText(txt) {
@@ -284,6 +315,19 @@
       return packs.length;
     },
     async importFile(file) { return S.importText(await U.readText(file)); },
+
+    /** Importe dans le compte des projets de l'ancienne version (stockés dans ce navigateur) */
+    async importLegacy(projects, onProgress) {
+      let lastId = null, i = 0;
+      for (const p of projects) {
+        onProgress && onProgress(++i, projects.length, p.name);
+        const media = (await DP.legacy.media(p.id)).map((m) => ({ id: m.id, name: m.name, type: m.type, kind: m.kind, w: m.w, h: m.h, blob: m.blob }));
+        lastId = await importPack({ project: p, media });
+      }
+      await S.refreshList();
+      if (lastId) await S.open(lastId);
+      return projects.length;
+    },
   });
 
   S._saveDebounced = U.debounce(() => S.saveNow(), 500);
@@ -312,16 +356,25 @@
     });
     const p = normalize(raw);
     p.id = newPid;
-    if ((await DB.all('projects')).some((x) => x.name === p.name)) p.name += T(' (importé)', ' (imported)');
+    if (S.list.some((x) => x.name === p.name)) p.name += T(' (importé)', ' (imported)');
     for (const m of mediaList) {
-      const blob = U.dataURLToBlob(m.dataURL);
-      await DB.put('media', { id: idMap[m.id], blob, type: m.type || blob.type, kind: m.kind || (/^audio\//.test(blob.type) ? 'audio' : 'image'),
-        w: m.w || 0, h: m.h || 0, size: blob.size, name: m.name, projectId: newPid, createdAt: Date.now() });
+      let blob = m.blob || U.dataURLToBlob(m.dataURL);
+      if (m.type && blob.type !== m.type) blob = new Blob([blob], { type: m.type });
+      try {
+        await DP.media.upload(idMap[m.id], blob, { name: m.name, projectId: newPid, w: m.w, h: m.h });
+      } catch (e) { console.warn('média ignoré', m.name, e); }
     }
-    await DB.put('projects', p);
+    p.createdAt = p.createdAt || Date.now();
+    p.updatedAt = Date.now();
+    await API(`/api/projects/${newPid}`, { method: 'PUT', body: p });
     return newPid;
   }
 
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') S.saveNow(); });
-  window.addEventListener('beforeunload', () => { S.saveNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && S.saveState !== 'saved') S.saveNow(); });
+  window.addEventListener('beforeunload', (e) => {
+    if (S.saveState === 'saved') return;
+    S.saveNow();
+    e.preventDefault();
+    e.returnValue = '';
+  });
 })();
