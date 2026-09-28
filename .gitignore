@@ -1,0 +1,7 @@
+# Données générées par DevPortals (comptes, projets, portails) et Python portable
+donnees/
+runtime/
+__pycache__/
+# anciennes versions
+portail-data/
+sauvegardes/

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portail</title>
+  <meta name="description" content="Portail officiel du jeu : actualités, mises à jour, personnages, véhicules, lieux, musique et plus.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="portal.css">
+</head>
+<body>
+  <header class="top" id="top"></header>
+  <main id="main"><div class="loading"><span class="spinner"></span></div></main>
+  <footer class="foot" id="foot"></footer>
+  <div id="refreshBar" class="refresh-bar" hidden></div>
+  <script>window.DP = { util: { esc: function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); } } };</script>
+  <script src="/shared/md.js"></script>
+  <script src="portal.js"></script>
+</body>
+</html>
