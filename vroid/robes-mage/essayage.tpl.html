@@ -1,0 +1,232 @@
+<title>Essayage des Robes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : cabine d'essayage — la scène 3D à gauche, le portant des 20 robes à droite. */
+:root{--bg:#f2eff7;--surface:#fff;--stage:#e4dff0;--ink:#1d1830;--muted:#5f5776;--line:#dbd5e8;--accent:#5a3ec8;--on-accent:#fff;
+  --display:"Marcellus",Georgia,serif;--text:"Figtree",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14111f;--surface:#1e1a2c;--stage:#262136;--ink:#ece8f7;--muted:#a79fbe;--line:#342e49;--accent:#b6a1ff;--on-accent:#17122b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14111f;--surface:#1e1a2c;--stage:#262136;--ink:#ece8f7;--muted:#a79fbe;--line:#342e49;--accent:#b6a1ff;--on-accent:#17122b;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--text)}
+.wrap{max-width:1240px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+header{display:grid;gap:8px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+h1{font:400 clamp(28px,4.6vw,42px)/1.08 var(--display);margin:0;text-wrap:balance}
+.lede{max-width:66ch;color:var(--muted);margin:0;font-size:16px}
+.cabine{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.cabine{grid-template-columns:minmax(0,1fr)}}
+.scene{position:relative;background:var(--stage);border-radius:18px;overflow:hidden;aspect-ratio:4/5;max-height:82vh;width:100%;max-width:100%}
+.scene canvas{display:block;width:100%;height:100%;touch-action:none}
+.scene.depose{outline:3px dashed var(--accent);outline-offset:-10px}
+.statut{position:absolute;left:12px;right:12px;bottom:12px;margin:0;font:500 12.5px/1.35 var(--mono);color:var(--ink);background:color-mix(in srgb,var(--surface) 86%,transparent);padding:7px 10px;border-radius:9px}
+.cote{display:grid;gap:16px;min-width:0}
+.bloc{display:grid;gap:9px;min-width:0}
+.bloc h2{font:500 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0}
+.rang{display:flex;flex-wrap:wrap;gap:8px}
+button,.fichier{font:500 14px/1 var(--text);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 13px;cursor:pointer}
+button:hover,.fichier:hover{border-color:var(--accent)}
+button:focus-visible,.fichier:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.fichier input{position:absolute;opacity:0;width:1px;height:1px}
+.portant{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px;max-height:420px;overflow:auto;padding:2px}
+.portant button{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center;text-align:left;padding:7px 9px;line-height:1.2;min-width:0}
+.pastille{display:flex;width:26px;height:26px;border-radius:7px;overflow:hidden;border:1px solid var(--line)}
+.pastille i{flex:1}
+.portant span{min-width:0;font-size:13.5px}
+.portant small{display:block;font:400 11px/1.3 var(--mono);opacity:.7}
+.fiche{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:6px}
+.fiche h3{font:400 21px/1.2 var(--display);margin:0;text-wrap:balance}
+.fiche p{margin:0;color:var(--muted);font-size:13.5px}
+.fiche code,.mode code{font:400 12.5px/1.4 var(--mono);color:var(--ink);overflow-wrap:anywhere}
+.mode{border-top:1px solid var(--line);padding-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.mode section{display:grid;gap:8px;align-content:start;min-width:0}
+.mode h3{font:400 20px/1.2 var(--display);margin:0}
+.mode p,.mode ol{margin:0;color:var(--muted);font-size:14px}
+.mode ol{padding-left:20px;display:grid;gap:4px}
+.mode pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;overflow-x:auto;font:400 12.5px/1.5 var(--mono);color:var(--ink)}
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Personnage VRoid · classe Mage</p>
+  <h1>Essayage des Robes</h1>
+  <p class="lede">Vingt robes de mage en fantasy réaliste, chacune en coupe femme et en coupe homme, au format <code>.glb</code>. Étoffes photographiées, galons brodés, cuir, fourrure et métal. Elles sont reliées aux os d’un personnage VRoid et suivent la marche comme la course. Déposez votre fichier <code>.vrm</code> pour les essayer sur votre personnage.</p>
+</header>
+<div class="cabine">
+  <div class="scene" id="scene"><canvas id="toile" aria-label="Aperçu 3D de la robe"></canvas><p class="statut" id="statut" role="status">Chargement du moteur 3D…</p></div>
+  <div class="cote">
+    <div class="bloc"><h2>Coupe et personnage</h2>
+      <div class="rang" id="coupes">
+        <button type="button" data-coupe="femme" aria-pressed="true">Femme</button>
+        <button type="button" data-coupe="homme" aria-pressed="false">Homme</button>
+      </div>
+      <div class="rang">
+        <label class="fichier">Essayer sur mon personnage (.vrm)<input type="file" id="monvrm" accept=".vrm,.glb"></label>
+        <button type="button" id="mannequin" hidden>Revenir au mannequin</button>
+      </div>
+    </div>
+    <div class="bloc"><h2>Pose</h2>
+      <div class="rang" id="poses">
+        <button type="button" data-pose="A" aria-pressed="true">Bras baissés</button>
+        <button type="button" data-pose="T" aria-pressed="false">Pose en T</button>
+        <button type="button" data-pose="marche" aria-pressed="false">Marche</button>
+        <button type="button" data-pose="course" aria-pressed="false">Course</button>
+        <button type="button" id="tourne" aria-pressed="true">Rotation auto</button>
+      </div>
+    </div>
+    <div class="fiche" id="fiche"></div>
+    <div class="bloc"><h2>Les 20 robes</h2><div class="portant" id="portant"></div></div>
+  </div>
+</div>
+<div class="mode">
+  <section>
+    <h3>Dans un jeu three.js</h3>
+    <p>Les fichiers sont dans <code>vroid/robes-mage/glb/femme/</code> et <code>glb/homme/</code>. Le petit module <code>attacher-robe.js</code> relie la robe aux os du personnage et l’adapte à sa taille.</p>
+<pre>import { attacherRobe } from './attacher-robe.js';
+const robe = await new GLTFLoader()
+  .loadAsync('glb/femme/01-archimage-celeste.glb');
+attacherRobe(robe.scene, vrm); // personnage en pose T</pre>
+  </section>
+  <section>
+    <h3>Dans Blender</h3>
+    <ol>
+      <li>Importez le personnage <code>.vrm</code> puis la robe <code>.glb</code>.</li>
+      <li>Sélectionnez le maillage de la robe et, dans son modificateur Armature, choisissez l’armature du personnage.</li>
+      <li>Supprimez l’armature importée avec la robe : les groupes de sommets portent déjà les noms des os VRoid (<code>J_Bip_…</code>).</li>
+    </ol>
+  </section>
+  <section>
+    <h3>À savoir</h3>
+    <p>Les robes sont taillées sur le corps VRoid standard, en pose T, avec un peu d’aisance, puis ajustées à la taille du personnage. Elles se portent par-dessus une tenue fine ; un haut épais (sweat à capuche, manteau) peut dépasser. Les étoffes viennent de Poly Haven (licence CC0).</p>
+  </section>
+</div>
+</div>
+<script type="importmap">{"imports":{"three":"__THREE__/build/three.module.js","three/addons/":"__THREE__/examples/jsm/","@pixiv/three-vrm":"__VRM__"}}</script>
+<script type="module">
+const ROBES = __DATA__;
+const BASE = '__BASE__';
+const $ = s => document.querySelector(s);
+const statut = t => { const e = $('#statut'); e.textContent = t; e.hidden = !t; };
+
+(async function main() {
+  let THREE, GLTFLoader, OrbitControls, VRMLoaderPlugin, VRMUtils;
+  try {
+    THREE = await import('three');
+    ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'));
+    ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
+    ({ VRMLoaderPlugin, VRMUtils } = await import('@pixiv/three-vrm'));
+  } catch (e) { statut('Le moteur 3D n’a pas pu se charger. Vérifiez la connexion puis rechargez la page.'); return; }
+
+__ATTACHER__
+
+  const toile = $('#toile'), boite = $('#scene');
+  const rendu = new THREE.WebGLRenderer({ canvas: toile, antialias: true, alpha: true });
+  rendu.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  rendu.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x54506a, 2.3));
+  const soleil = new THREE.DirectionalLight(0xffffff, 2.1); soleil.position.set(1.5, 2.5, 3); scene.add(soleil);
+  const sol = new THREE.Mesh(new THREE.CircleGeometry(0.9, 48), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.12 }));
+  sol.rotation.x = -Math.PI / 2; sol.position.y = -0.002; scene.add(sol);
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50); camera.position.set(0, 1.15, 3.9);
+  const orbite = new OrbitControls(camera, toile);
+  orbite.target.set(0, 0.86, 0); orbite.enablePan = false; orbite.minDistance = 1.2; orbite.maxDistance = 7; orbite.autoRotate = true; orbite.autoRotateSpeed = 1.6; orbite.update();
+  const taille = () => { const w = boite.clientWidth, h = boite.clientHeight; if (!w || !h) return; rendu.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+  new ResizeObserver(taille).observe(boite); taille();
+
+  // Charge un GLB/VRM depuis un tampon. Les textures passent par des balises image.
+  const lire = buffer => new Promise((ok, ko) => {
+    const chargeur = new GLTFLoader(); chargeur.register(p => new VRMLoaderPlugin(p));
+    const cib = window.createImageBitmap;
+    try { window.createImageBitmap = undefined; } catch (e) { /* lecture seule */ }
+    try { chargeur.parse(buffer, '', ok, ko); } catch (e) { ko(e); } finally { try { window.createImageBitmap = cib; } catch (e) { /* idem */ } }
+  });
+  const tampons = new Map();
+  const telecharger = async chemin => { if (!tampons.has(chemin)) { const r = await fetch(BASE + chemin); if (!r.ok) throw new Error(chemin); tampons.set(chemin, await r.arrayBuffer()); } return tampons.get(chemin).slice(0); };
+
+  const NOMS = { hips: 'J_Bip_C_Hips', spine: 'J_Bip_C_Spine', leftUpperArm: 'J_Bip_L_UpperArm', rightUpperArm: 'J_Bip_R_UpperArm', leftLowerArm: 'J_Bip_L_LowerArm', rightLowerArm: 'J_Bip_R_LowerArm',
+    leftUpperLeg: 'J_Bip_L_UpperLeg', rightUpperLeg: 'J_Bip_R_UpperLeg', leftLowerLeg: 'J_Bip_L_LowerLeg', rightLowerLeg: 'J_Bip_R_LowerLeg' };
+  let perso = null, robe = null, courante = 0, pose = 'A', jeton = 0, coupe = 'femme';
+
+  function repos() {
+    if (perso.vrm) { perso.vrm.humanoid.resetNormalizedPose(); perso.vrm.update(0); }
+    else for (const k in NOMS) perso.racine.getObjectByName(NOMS[k]).rotation.set(0, 0, 0);
+    perso.racine.updateMatrixWorld(true);
+  }
+  function poser(t) {
+    const os = k => (perso.vrm ? perso.vrm.humanoid.getNormalizedBoneNode(k) : perso.racine.getObjectByName(NOMS[k]));
+    const sg = perso.vrm && perso.vrm.meta && perso.vrm.meta.metaVersion === '0' ? -1 : 1;   // un VRM 0.x tourne en sens inverse
+    const r = (k, x, y, z) => { const o = os(k); if (o) o.rotation.set(x * sg, y, z * sg); };
+    const c = pose === 'course', m = pose === 'marche' || c, w = c ? 9 : 5.2, s = m ? Math.sin(t * w) : 0, co = m ? Math.cos(t * w) : 0, bras = pose === 'T' ? 0 : 1.18;
+    const aj = c ? 0.95 : 0.5, ab = c ? 0.8 : 0.45, ge = c ? 1.5 : 0.55;
+    r('leftUpperArm', ab * s, 0, -bras); r('rightUpperArm', -ab * s, 0, bras);
+    r('leftLowerArm', 0, c ? -1.2 : m ? -0.35 : 0, 0); r('rightLowerArm', 0, c ? 1.2 : m ? 0.35 : 0, 0);
+    r('leftUpperLeg', -aj * s + (c ? -0.15 : 0), 0, 0); r('rightUpperLeg', aj * s + (c ? -0.15 : 0), 0, 0);
+    r('leftLowerLeg', m ? ge * Math.max(0, 0.25 + co * 0.75) : 0, 0, 0); r('rightLowerLeg', m ? ge * Math.max(0, 0.25 - co * 0.75) : 0, 0, 0);
+    r('spine', c ? 0.22 : m ? 0.05 : 0, m ? 0.08 * s : 0, 0);
+  }
+
+  async function habiller(i) {
+    const moi = ++jeton; courante = i; const R = ROBES[i];
+    document.querySelectorAll('#portant button').forEach((b, k) => b.setAttribute('aria-pressed', k === i));
+    $('#fiche').innerHTML = `<h3>${R.nom}</h3><p>${R.theme}. ${R.description}</p><p><code>glb/${coupe}/${R.fichier}</code> · ${R[coupe].triangles.toLocaleString('fr-FR')} triangles · ${R[coupe].ko} Ko</p>`;
+    statut('Chargement de la robe…');
+    try {
+      const g = await lire(await telecharger('glb/' + coupe + '/' + R.fichier));
+      if (moi !== jeton) return;
+      if (robe) { retirerRobe(robe); robe = null; }
+      repos(); robe = attacherRobe(g.scene, perso.vrm || perso.racine);
+      statut('');
+    } catch (e) { if (moi === jeton) statut('Cette robe n’a pas pu être chargée.'); }
+  }
+  async function changerPerso(buffer, estVrm) {
+    const g = await lire(buffer);
+    const vrm = g.userData.vrm || null;
+    if (estVrm && !vrm) throw new Error('pas un VRM');
+    if (robe) { retirerRobe(robe); robe = null; }
+    if (perso) scene.remove(perso.racine);
+    if (vrm) VRMUtils.rotateVRM0(vrm);
+    perso = { vrm, racine: vrm ? vrm.scene : g.scene };
+    perso.racine.traverse(o => { o.frustumCulled = false; });
+    scene.add(perso.racine);
+    $('#mannequin').hidden = !vrm;
+    await habiller(courante);
+  }
+
+  $('#portant').innerHTML = ROBES.map((R, i) => `<button type="button" data-i="${i}" aria-pressed="false"><span class="pastille">${R.couleurs.slice(0, 3).map(c => `<i style="background:${c}"></i>`).join('')}</span><span>${R.nom}<small>${String(i + 1).padStart(2, '0')} · ${R.theme}</small></span></button>`).join('');
+  $('#portant').addEventListener('click', e => { const b = e.target.closest('button'); if (b) habiller(+b.dataset.i); });
+  $('#poses').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.id === 'tourne') { orbite.autoRotate = !orbite.autoRotate; b.setAttribute('aria-pressed', orbite.autoRotate); return; }
+    pose = b.dataset.pose; document.querySelectorAll('#poses [data-pose]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  const ouvrir = async f => {
+    if (!f) return; statut('Lecture de ' + f.name + '…');
+    try { await changerPerso(await f.arrayBuffer(), true); }
+    catch (e) { statut('Ce fichier n’a pas pu être lu comme un personnage VRM (os VRoid introuvables).'); }
+  };
+  $('#monvrm').addEventListener('change', e => { ouvrir(e.target.files[0]); e.target.value = ''; });
+  const mannequin = async () => { statut('Chargement du mannequin…'); await changerPerso(await telecharger('glb/mannequin-' + coupe + '.glb'), false); };
+  $('#mannequin').addEventListener('click', mannequin);
+  $('#coupes').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b || b.dataset.coupe === coupe) return;
+    coupe = b.dataset.coupe; document.querySelectorAll('#coupes button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    try { if (perso.vrm) await habiller(courante); else await mannequin(); } catch (err) { statut('Les fichiers 3D n’ont pas pu être chargés.'); }
+  });
+  ['dragenter', 'dragover'].forEach(n => boite.addEventListener(n, e => { e.preventDefault(); boite.classList.add('depose'); }));
+  ['dragleave', 'drop'].forEach(n => boite.addEventListener(n, e => { e.preventDefault(); boite.classList.remove('depose'); }));
+  boite.addEventListener('drop', e => ouvrir(e.dataTransfer.files[0]));
+
+  try { await changerPerso(await telecharger('glb/mannequin-femme.glb'), false); }
+  catch (e) { statut('Les fichiers 3D n’ont pas pu être chargés.'); return; }
+
+  const horloge = new THREE.Clock();
+  rendu.setAnimationLoop(() => {
+    const dt = horloge.getDelta(), t = horloge.elapsedTime;
+    if (perso) { poser(t); if (perso.vrm) perso.vrm.update(dt); }
+    orbite.update(); rendu.render(scene, camera);
+  });
+  window.__pret = true;
+})();
+</script>

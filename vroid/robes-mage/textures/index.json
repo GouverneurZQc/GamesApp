@@ -1,0 +1,54 @@
+{
+ "caban": {
+  "gain": 1.404,
+  "rough": 0.81
+ },
+ "poly_wool_herringbone": {
+  "gain": 1.395,
+  "rough": 0.86
+ },
+ "rough_linen": {
+  "gain": 1.401,
+  "rough": 0.71
+ },
+ "hessian_380": {
+  "gain": 1.388,
+  "rough": 0.58
+ },
+ "velour_velvet": {
+  "gain": 1.396,
+  "rough": 0.72
+ },
+ "crepe_satin": {
+  "gain": 1.407,
+  "rough": 0.49
+ },
+ "crepe_georgette": {
+  "gain": 1.407,
+  "rough": 0.84
+ },
+ "floral_jacquard": {
+  "gain": 1.416,
+  "rough": 0.71
+ },
+ "quatrefoil_jacquard_fabric": {
+  "gain": 1.404,
+  "rough": 0.71
+ },
+ "brown_leather": {
+  "gain": 1.413,
+  "rough": 0.66
+ },
+ "curly_teddy_natural": {
+  "gain": 1.401,
+  "rough": 0.7
+ },
+ "scuba_suede": {
+  "gain": 1.399,
+  "rough": 0.71
+ },
+ "wool_boucle": {
+  "gain": 1.695,
+  "rough": 0.65
+ }
+}

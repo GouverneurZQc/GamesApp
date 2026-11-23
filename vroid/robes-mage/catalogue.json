@@ -1,0 +1,422 @@
+[
+ {
+  "numero": 1,
+  "id": "archimage-celeste",
+  "nom": "Robe d'Archimage Céleste",
+  "theme": "Astres et constellations",
+  "description": "Velours bleu nuit semé d’étoiles, mantelet et galons d’or, grand chapeau pointu.",
+  "couleurs": [
+   "#1e2a52",
+   "#c9a24a",
+   "#141c3a"
+  ],
+  "fichier": "01-archimage-celeste.glb",
+  "femme": {
+   "triangles": 24340,
+   "ko": 1332
+  },
+  "homme": {
+   "triangles": 24340,
+   "ko": 1332
+  }
+ },
+ {
+  "numero": 2,
+  "id": "pyromancien",
+  "nom": "Robe du Pyromancien",
+  "theme": "Feu et braises",
+  "description": "Laine garance fendue devant, ourlet en flammes, épaulières de cuir cloutées.",
+  "couleurs": [
+   "#8f2318",
+   "#c4611f",
+   "#231a18"
+  ],
+  "fichier": "02-pyromancien.glb",
+  "femme": {
+   "triangles": 17692,
+   "ko": 943
+  },
+  "homme": {
+   "triangles": 17692,
+   "ko": 943
+  }
+ },
+ {
+  "numero": 3,
+  "id": "cryomancien",
+  "nom": "Robe du Cryomancien",
+  "theme": "Glace et givre",
+  "description": "Manteau de lin bleu glacier bordé de fourrure blanche, pèlerine à pointes, fermoirs d’argent.",
+  "couleurs": [
+   "#a9c4d4",
+   "#f2f2ee",
+   "#8794a3"
+  ],
+  "fichier": "03-cryomancien.glb",
+  "femme": {
+   "triangles": 29376,
+   "ko": 1384
+  },
+  "homme": {
+   "triangles": 29376,
+   "ko": 1384
+  }
+ },
+ {
+  "numero": 4,
+  "id": "druide-sylvestre",
+  "nom": "Robe du Druide Sylvestre",
+  "theme": "Forêt ancienne",
+  "description": "Tunique de laine mousse sur sous-robe brune, mantelet de feuilles, capuche à ramure.",
+  "couleurs": [
+   "#3f5a34",
+   "#6a4a2e",
+   "#b6a47c"
+  ],
+  "fichier": "04-druide-sylvestre.glb",
+  "femme": {
+   "triangles": 25036,
+   "ko": 1314
+  },
+  "homme": {
+   "triangles": 25036,
+   "ko": 1315
+  }
+ },
+ {
+  "numero": 5,
+  "id": "necromancien",
+  "nom": "Robe du Nécromancien",
+  "theme": "Tombes et esprits",
+  "description": "Bure noire en lambeaux, cape déchirée, capuche profonde, ossements cousus sur le buste.",
+  "couleurs": [
+   "#232127",
+   "#8fae5e",
+   "#d2ccb8"
+  ],
+  "fichier": "05-necromancien.glb",
+  "femme": {
+   "triangles": 29178,
+   "ko": 1515
+  },
+  "homme": {
+   "triangles": 29178,
+   "ko": 1515
+  }
+ },
+ {
+  "numero": 6,
+  "id": "pretresse-solaire",
+  "nom": "Robe du Prêtre Solaire",
+  "theme": "Lumière et soleil",
+  "description": "Lin ivoire, tabard d’or devant et derrière, pectoral, halo rayonnant.",
+  "couleurs": [
+   "#e9e0c6",
+   "#c9992e",
+   "#2f6f9c"
+  ],
+  "fichier": "06-pretresse-solaire.glb",
+  "femme": {
+   "triangles": 27904,
+   "ko": 1102
+  },
+  "homme": {
+   "triangles": 27904,
+   "ko": 1102
+  }
+ },
+ {
+  "numero": 7,
+  "id": "electromancien",
+  "nom": "Veste-robe de l’Électromancien",
+  "theme": "Foudre et orage",
+  "description": "Veste ocre à ourlet dentelé et pan asymétrique, cuir ardoise, cercle de tempête.",
+  "couleurs": [
+   "#c9a227",
+   "#33363d",
+   "#6fb7cf"
+  ],
+  "fichier": "07-electromancien.glb",
+  "femme": {
+   "triangles": 12313,
+   "ko": 891
+  },
+  "homme": {
+   "triangles": 12313,
+   "ko": 891
+  }
+ },
+ {
+  "numero": 8,
+  "id": "mage-des-marees",
+  "nom": "Robe du Mage des Marées",
+  "theme": "Océan et récifs",
+  "description": "Soie sarcelle à écailles, col coquillage nacré, ceinture de perles de corail.",
+  "couleurs": [
+   "#1f6f73",
+   "#c96b55",
+   "#e9dcc0"
+  ],
+  "fichier": "08-mage-des-marees.glb",
+  "femme": {
+   "triangles": 25528,
+   "ko": 872
+  },
+  "homme": {
+   "triangles": 25512,
+   "ko": 872
+  }
+ },
+ {
+  "numero": 9,
+  "id": "illusionniste",
+  "nom": "Robe de l’Illusionniste",
+  "theme": "Mirages et masques",
+  "description": "Tunique mi-partie prune et sarcelle à losanges, ourlet à pointes et grelots, chaperon bicolore.",
+  "couleurs": [
+   "#8f2a6b",
+   "#1f8ea3",
+   "#c9a24a"
+  ],
+  "fichier": "09-illusionniste.glb",
+  "femme": {
+   "triangles": 19570,
+   "ko": 891
+  },
+  "homme": {
+   "triangles": 19570,
+   "ko": 891
+  }
+ },
+ {
+  "numero": 10,
+  "id": "chronomancien",
+  "nom": "Redingote du Chronomancien",
+  "theme": "Temps et rouages",
+  "description": "Redingote de laine cuivre ouverte sur un gilet crème, astrolabe et montre de laiton.",
+  "couleurs": [
+   "#7a4a2a",
+   "#e6d9bd",
+   "#b98d3c"
+  ],
+  "fichier": "10-chronomancien.glb",
+  "femme": {
+   "triangles": 27412,
+   "ko": 1483
+  },
+  "homme": {
+   "triangles": 27412,
+   "ko": 1483
+  }
+ },
+ {
+  "numero": 11,
+  "id": "geomancien",
+  "nom": "Robe du Géomancien",
+  "theme": "Roche et cristaux",
+  "description": "Tunique lourde gris pierre, épaulières de roc hérissées d’améthystes, large ceinture.",
+  "couleurs": [
+   "#6e7177",
+   "#3f4248",
+   "#8d5cc4"
+  ],
+  "fichier": "11-geomancien.glb",
+  "femme": {
+   "triangles": 19752,
+   "ko": 1060
+  },
+  "homme": {
+   "triangles": 19752,
+   "ko": 1060
+  }
+ },
+ {
+  "numero": 12,
+  "id": "voile-lune",
+  "nom": "Robe Voile-de-Lune",
+  "theme": "Lune et songes",
+  "description": "Soie lavande fluide, voiles translucides, diadème en croissant d’argent.",
+  "couleurs": [
+   "#9d92c4",
+   "#d9dde6",
+   "#5a5088"
+  ],
+  "fichier": "12-voile-lune.glb",
+  "femme": {
+   "triangles": 22776,
+   "ko": 752
+  },
+  "homme": {
+   "triangles": 25404,
+   "ko": 828
+  }
+ },
+ {
+  "numero": 13,
+  "id": "mage-du-desert",
+  "nom": "Tenue du Mage du Désert",
+  "theme": "Dunes et caravanes",
+  "description": "Tunique safran rayée à ourlet en biais, large ceinture indigo nouée, turban.",
+  "couleurs": [
+   "#c8861e",
+   "#2a2f6e",
+   "#e6c27a"
+  ],
+  "fichier": "13-mage-du-desert.glb",
+  "femme": {
+   "triangles": 19754,
+   "ko": 1058
+  },
+  "homme": {
+   "triangles": 19754,
+   "ko": 1059
+  }
+ },
+ {
+  "numero": 14,
+  "id": "alchimiste",
+  "nom": "Blouse de l’Alchimiste",
+  "theme": "Laboratoire et potions",
+  "description": "Blouse de laine à carreaux, tablier de cuir à poches, bandoulière de fioles.",
+  "couleurs": [
+   "#6a6f2c",
+   "#5d3b22",
+   "#b9963a"
+  ],
+  "fichier": "14-alchimiste.glb",
+  "femme": {
+   "triangles": 21334,
+   "ko": 1048
+  },
+  "homme": {
+   "triangles": 21334,
+   "ko": 1048
+  }
+ },
+ {
+  "numero": 15,
+  "id": "enchanteresse-des-roses",
+  "nom": "Robe de l’Enchanteur des Roses",
+  "theme": "Roseraie enchantée",
+  "description": "Soie vieux rose à volants étagés, corsage bordeaux lacé, couronne de roses.",
+  "couleurs": [
+   "#c98a9b",
+   "#7a2a45",
+   "#5a7a4a"
+  ],
+  "fichier": "15-enchanteresse-des-roses.glb",
+  "femme": {
+   "triangles": 28354,
+   "ko": 1556
+  },
+  "homme": {
+   "triangles": 27258,
+   "ko": 1527
+  }
+ },
+ {
+  "numero": 16,
+  "id": "arcaniste",
+  "nom": "Robe de l’Arcaniste",
+  "theme": "Savoir et runes",
+  "description": "Toge de velours violet, étole d’argent brodée, pèlerine à pointes, grimoire à la hanche.",
+  "couleurs": [
+   "#4a2378",
+   "#b9bec8",
+   "#2a1248"
+  ],
+  "fichier": "16-arcaniste.glb",
+  "femme": {
+   "triangles": 24814,
+   "ko": 1292
+  },
+  "homme": {
+   "triangles": 24814,
+   "ko": 1292
+  }
+ },
+ {
+  "numero": 17,
+  "id": "sorcier-de-cour",
+  "nom": "Justaucorps du Sorcier de Cour",
+  "theme": "Palais et intrigues",
+  "description": "Velours bordeaux damassé, plastron de brocart boutonné, jabot, demi-cape, chapeau à plumes.",
+  "couleurs": [
+   "#5a1228",
+   "#c9a24a",
+   "#17141a"
+  ],
+  "fichier": "17-sorcier-de-cour.glb",
+  "femme": {
+   "triangles": 22524,
+   "ko": 1459
+  },
+  "homme": {
+   "triangles": 22524,
+   "ko": 1459
+  }
+ },
+ {
+  "numero": 18,
+  "id": "sylphe-des-vents",
+  "nom": "Robe de la Sylphe des Vents",
+  "theme": "Vent et plumes",
+  "description": "Soie sauge en pétales superposés, ailes de plumes, rubans flottants.",
+  "couleurs": [
+   "#9fcdb2",
+   "#f1efe8",
+   "#d9c98a"
+  ],
+  "fichier": "18-sylphe-des-vents.glb",
+  "femme": {
+   "triangles": 13620,
+   "ko": 483
+  },
+  "homme": {
+   "triangles": 15196,
+   "ko": 529
+  }
+ },
+ {
+  "numero": 19,
+  "id": "prismancien",
+  "nom": "Chasuble du Prismancien",
+  "theme": "Lumière décomposée",
+  "description": "Chasuble de soie nacrée à facettes irisées, poignets en prisme, cristaux en éventail.",
+  "couleurs": [
+   "#e4e2e8",
+   "#8fc7d6",
+   "#c9a0d0"
+  ],
+  "fichier": "19-prismancien.glb",
+  "femme": {
+   "triangles": 18276,
+   "ko": 641
+  },
+  "homme": {
+   "triangles": 18276,
+   "ko": 641
+  }
+ },
+ {
+  "numero": 20,
+  "id": "chamane-des-esprits",
+  "nom": "Poncho du Chamane des Esprits",
+  "theme": "Totems et ancêtres",
+  "description": "Poncho de laine brune à chevrons turquoise et franges de daim, cornes et plumes.",
+  "couleurs": [
+   "#4a3020",
+   "#2f8f86",
+   "#d9cfb4"
+  ],
+  "fichier": "20-chamane-des-esprits.glb",
+  "femme": {
+   "triangles": 20576,
+   "ko": 1335
+  },
+  "homme": {
+   "triangles": 20576,
+   "ko": 1335
+  }
+ }
+]
