@@ -1,0 +1,686 @@
+[
+  {
+    "numero": 1,
+    "id": "archimage-celeste",
+    "nom": "Robe d'Archimage Céleste",
+    "theme": "Astres et constellations",
+    "couleurs": [
+      {
+        "nom": "Bleu nuit",
+        "hex": "#1b2a6b"
+      },
+      {
+        "nom": "Indigo profond",
+        "hex": "#111a45"
+      },
+      {
+        "nom": "Or stellaire",
+        "hex": "#e8b93c"
+      },
+      {
+        "nom": "Étoile pâle",
+        "hex": "#f6e7a8"
+      }
+    ],
+    "silhouette": "Longue robe évasée jusqu’au sol, ourlet droit galonné d’or.",
+    "manches": "Immenses manches de sorcier tombant sous les genoux.",
+    "details": "Mantelet doré festonné, fermoir en croissant de lune, ceinture à pan.",
+    "coiffe": "Grand chapeau pointu à la pointe recourbée.",
+    "tissu": {
+      "motif": "Semis d’étoiles",
+      "fichier": "tissus/01-archimage-celeste.png"
+    },
+    "base_vroid": "Une-pièce longue + manches larges ; chapeau en accessoire.",
+    "apercu": "apercus/01-archimage-celeste.svg"
+  },
+  {
+    "numero": 2,
+    "id": "pyromancien",
+    "nom": "Robe du Pyromancien",
+    "theme": "Feu et braises",
+    "couleurs": [
+      {
+        "nom": "Écarlate",
+        "hex": "#c81e1e"
+      },
+      {
+        "nom": "Orange braise",
+        "hex": "#ff8a1f"
+      },
+      {
+        "nom": "Jaune flamme",
+        "hex": "#ffd23f"
+      },
+      {
+        "nom": "Noir charbon",
+        "hex": "#1c1416"
+      }
+    ],
+    "silhouette": "Tunique mi-mollet fendue devant, ourlet découpé en langues de feu.",
+    "manches": "Sans manches : bras nus, bandages noirs et brassards.",
+    "details": "Épaulières en pointes, col flamme, dégradé qui s’embrase vers le bas.",
+    "coiffe": "Diadème fin orné d’une flamme.",
+    "tissu": {
+      "motif": "Flammèches",
+      "fichier": "tissus/02-pyromancien.png"
+    },
+    "base_vroid": "Haut sans manches + jupe longue fendue + pantalon moulant noir.",
+    "apercu": "apercus/02-pyromancien.svg"
+  },
+  {
+    "numero": 3,
+    "id": "cryomancien",
+    "nom": "Robe du Cryomancien",
+    "theme": "Glace et givre",
+    "couleurs": [
+      {
+        "nom": "Bleu glacier",
+        "hex": "#bfe9f7"
+      },
+      {
+        "nom": "Bleu banquise",
+        "hex": "#7fb9d6"
+      },
+      {
+        "nom": "Blanc neige",
+        "hex": "#ffffff"
+      },
+      {
+        "nom": "Argent givré",
+        "hex": "#8fa3b8"
+      }
+    ],
+    "silhouette": "Manteau long et droit, ourlet taillé en cristaux.",
+    "manches": "Manches ajustées terminées par des poignets de fourrure.",
+    "details": "Gros col de fourrure blanche, pèlerine pointue, fermoirs losanges.",
+    "coiffe": "Tiare de trois cristaux de glace.",
+    "tissu": {
+      "motif": "Flocons",
+      "fichier": "tissus/03-cryomancien.png"
+    },
+    "base_vroid": "Manteau long cintré + col fourrure (texture) ; bottes claires.",
+    "apercu": "apercus/03-cryomancien.svg"
+  },
+  {
+    "numero": 4,
+    "id": "druide-sylvestre",
+    "nom": "Robe du Druide Sylvestre",
+    "theme": "Forêt ancienne",
+    "couleurs": [
+      {
+        "nom": "Vert forêt",
+        "hex": "#2f6b3a"
+      },
+      {
+        "nom": "Vert feuille",
+        "hex": "#9bc45a"
+      },
+      {
+        "nom": "Brun écorce",
+        "hex": "#7b5231"
+      },
+      {
+        "nom": "Chanvre",
+        "hex": "#c9a66b"
+      }
+    ],
+    "silhouette": "Tunique aux genoux à ourlet en feuilles, sur une sous-robe brune effilochée.",
+    "manches": "Manches cloche doublées de brun.",
+    "details": "Mantelet de feuilles, ceinture de corde nouée, agrafe-feuille.",
+    "coiffe": "Capuche relevée surmontée de bois de cerf.",
+    "tissu": {
+      "motif": "Feuillage",
+      "fichier": "tissus/04-druide-sylvestre.png"
+    },
+    "base_vroid": "Tunique mi-longue + jupe longue dessous ; capuche et bois en accessoires.",
+    "apercu": "apercus/04-druide-sylvestre.svg"
+  },
+  {
+    "numero": 5,
+    "id": "necromancien",
+    "nom": "Robe du Nécromancien",
+    "theme": "Tombes et esprits",
+    "couleurs": [
+      {
+        "nom": "Noir tombe",
+        "hex": "#17151c"
+      },
+      {
+        "nom": "Gris linceul",
+        "hex": "#2a2733"
+      },
+      {
+        "nom": "Vert spectral",
+        "hex": "#7dff5a"
+      },
+      {
+        "nom": "Os",
+        "hex": "#d9d6c5"
+      }
+    ],
+    "silhouette": "Robe très longue et étroite, en lambeaux, doublée d’une cape déchirée.",
+    "manches": "Manches de sorcier à doublure verte luisante.",
+    "details": "Cage thoracique peinte sur le buste, boucle en crâne, liseré spectral.",
+    "coiffe": "Capuche profonde, regard vert dans l’ombre.",
+    "tissu": {
+      "motif": "Runes funèbres",
+      "fichier": "tissus/05-necromancien.png"
+    },
+    "base_vroid": "Une-pièce longue étroite + cape ; bords « déchirés » peints en transparence.",
+    "apercu": "apercus/05-necromancien.svg"
+  },
+  {
+    "numero": 6,
+    "id": "pretresse-solaire",
+    "nom": "Robe de la Prêtresse Solaire",
+    "theme": "Lumière et soleil",
+    "couleurs": [
+      {
+        "nom": "Ivoire",
+        "hex": "#f6efd9"
+      },
+      {
+        "nom": "Or solaire",
+        "hex": "#d9a520"
+      },
+      {
+        "nom": "Azur",
+        "hex": "#2e86c1"
+      },
+      {
+        "nom": "Sable clair",
+        "hex": "#ecd9a0"
+      }
+    ],
+    "silhouette": "Robe longue évasée, recouverte d’un tabard doré en pointe.",
+    "manches": "Manches kimono rectangulaires bordées d’or.",
+    "details": "Large pectoral doré, emblème du soleil, ceinture azur.",
+    "coiffe": "Halo rayonnant derrière la tête et diadème à gemme.",
+    "tissu": {
+      "motif": "Petits soleils",
+      "fichier": "tissus/06-pretresse-solaire.png"
+    },
+    "base_vroid": "Une-pièce longue blanche + tabard (couche par-dessus) ; halo en accessoire.",
+    "apercu": "apercus/06-pretresse-solaire.svg"
+  },
+  {
+    "numero": 7,
+    "id": "electromancien",
+    "nom": "Veste-robe de l’Électromancien",
+    "theme": "Foudre et orage",
+    "couleurs": [
+      {
+        "nom": "Jaune foudre",
+        "hex": "#ffd21f"
+      },
+      {
+        "nom": "Anthracite",
+        "hex": "#2d3038"
+      },
+      {
+        "nom": "Cyan arc",
+        "hex": "#4fe3ff"
+      },
+      {
+        "nom": "Ocre électrique",
+        "hex": "#d4a300"
+      }
+    ],
+    "silhouette": "Veste courte à ourlet en zigzag, pan asymétrique sur une seule hanche, pantalon anthracite.",
+    "manches": "Manches courtes au coude, longs gants isolants.",
+    "details": "Grand éclair en travers du buste, col montant, ceinture à sacoches.",
+    "coiffe": "Lunettes de protection relevées sur le front.",
+    "tissu": {
+      "motif": "Éclairs",
+      "fichier": "tissus/07-electromancien.png"
+    },
+    "base_vroid": "Veste courte + pantalon + gants longs ; pan latéral peint sur une jupe courte.",
+    "apercu": "apercus/07-electromancien.svg"
+  },
+  {
+    "numero": 8,
+    "id": "mage-des-marees",
+    "nom": "Robe du Mage des Marées",
+    "theme": "Océan et récifs",
+    "couleurs": [
+      {
+        "nom": "Sarcelle",
+        "hex": "#0f8f8f"
+      },
+      {
+        "nom": "Lagon",
+        "hex": "#47c4bd"
+      },
+      {
+        "nom": "Corail",
+        "hex": "#ff7f66"
+      },
+      {
+        "nom": "Nacre",
+        "hex": "#f4ead7"
+      }
+    ],
+    "silhouette": "Fourreau sirène : moulant jusqu’aux genoux puis évasé en nageoire festonnée.",
+    "manches": "Manches cloche couleur lagon, doublure corail.",
+    "details": "Col coquillage nacré, ceinture de perles de corail, liseré corail.",
+    "coiffe": "Couronne de branches de corail.",
+    "tissu": {
+      "motif": "Écailles",
+      "fichier": "tissus/08-mage-des-marees.png"
+    },
+    "base_vroid": "Une-pièce longue moulante, bas élargi ; texture écailles sur la jupe.",
+    "apercu": "apercus/08-mage-des-marees.svg"
+  },
+  {
+    "numero": 9,
+    "id": "illusionniste",
+    "nom": "Robe de l’Illusionniste",
+    "theme": "Mirages et carnaval",
+    "couleurs": [
+      {
+        "nom": "Magenta",
+        "hex": "#d81b8c"
+      },
+      {
+        "nom": "Cyan",
+        "hex": "#19c3e6"
+      },
+      {
+        "nom": "Or grelot",
+        "hex": "#ffcf33"
+      },
+      {
+        "nom": "Blanc fraise",
+        "hex": "#ffffff"
+      }
+    ],
+    "silhouette": "Tunique mi-partie, une moitié magenta et l’autre cyan, grandes pointes à grelots.",
+    "manches": "Manches bouffantes aux couleurs inversées, poignets blancs.",
+    "details": "Fraise blanche dentelée, pompons dorés, collants dépareillés.",
+    "coiffe": "Bonnet de bouffon à deux cornes et loup noir.",
+    "tissu": {
+      "motif": "Losanges arlequin",
+      "fichier": "tissus/09-illusionniste.png"
+    },
+    "base_vroid": "Tunique courte bicolore (texture coupée au milieu) + collants de deux couleurs.",
+    "apercu": "apercus/09-illusionniste.svg"
+  },
+  {
+    "numero": 10,
+    "id": "chronomancien",
+    "nom": "Redingote du Chronomancien",
+    "theme": "Temps et rouages",
+    "couleurs": [
+      {
+        "nom": "Cuivre",
+        "hex": "#9c5226"
+      },
+      {
+        "nom": "Crème",
+        "hex": "#f1e3c6"
+      },
+      {
+        "nom": "Laiton",
+        "hex": "#d4a53a"
+      },
+      {
+        "nom": "Cuir sombre",
+        "hex": "#4a2d1b"
+      }
+    ],
+    "silhouette": "Redingote structurée ouverte sur un gilet crème, tombant aux chevilles.",
+    "manches": "Manches bouffantes resserrées par de larges revers crème.",
+    "details": "Grand rouage de laiton dans le dos, revers sombres, montre à gousset.",
+    "coiffe": "Petit haut-de-forme à lunettes et monocle.",
+    "tissu": {
+      "motif": "Engrenages",
+      "fichier": "tissus/10-chronomancien.png"
+    },
+    "base_vroid": "Manteau long ouvert + chemise/gilet dessous ; rouage dorsal en accessoire.",
+    "apercu": "apercus/10-chronomancien.svg"
+  },
+  {
+    "numero": 11,
+    "id": "geomancien",
+    "nom": "Robe du Géomancien",
+    "theme": "Roche et cristaux",
+    "couleurs": [
+      {
+        "nom": "Gris pierre",
+        "hex": "#8a8d93"
+      },
+      {
+        "nom": "Ardoise",
+        "hex": "#4e5159"
+      },
+      {
+        "nom": "Améthyste",
+        "hex": "#9b59d0"
+      },
+      {
+        "nom": "Quartz lilas",
+        "hex": "#c9b3ee"
+      }
+    ],
+    "silhouette": "Tunique lourde et droite aux mollets, bande centrale d’ardoise.",
+    "manches": "Manches courtes larges, gantelets de pierre.",
+    "details": "Épaulières de roc d’où jaillissent des cristaux, large ceinture à gemme.",
+    "coiffe": "Bandeau hérissé de trois éclats de cristal.",
+    "tissu": {
+      "motif": "Dallage hexagonal",
+      "fichier": "tissus/11-geomancien.png"
+    },
+    "base_vroid": "Tunique droite mi-longue + épaulières rocheuses en accessoire.",
+    "apercu": "apercus/11-geomancien.svg"
+  },
+  {
+    "numero": 12,
+    "id": "voile-lune",
+    "nom": "Robe Voile-de-Lune",
+    "theme": "Lune et songes",
+    "couleurs": [
+      {
+        "nom": "Lavande",
+        "hex": "#b9a7e8"
+      },
+      {
+        "nom": "Glycine",
+        "hex": "#8f7bc9"
+      },
+      {
+        "nom": "Argent lunaire",
+        "hex": "#e6e9f2"
+      },
+      {
+        "nom": "Lueur pâle",
+        "hex": "#fff7c2"
+      }
+    ],
+    "silhouette": "Robe empire à taille haute, fluide jusqu’au sol, ourlet ondulé.",
+    "manches": "Épaules nues ; longs voiles transparents accrochés aux bras.",
+    "details": "Cape de voile translucide, pendentif croissant, bracelets d’argent.",
+    "coiffe": "Diadème en croissant de lune, voile sur les cheveux.",
+    "tissu": {
+      "motif": "Croissants",
+      "fichier": "tissus/12-voile-lune.png"
+    },
+    "base_vroid": "Une-pièce taille haute sans manches ; voiles peints avec transparence.",
+    "apercu": "apercus/12-voile-lune.svg"
+  },
+  {
+    "numero": 13,
+    "id": "mage-du-desert",
+    "nom": "Tenue du Mage du Désert",
+    "theme": "Dunes et caravanes",
+    "couleurs": [
+      {
+        "nom": "Safran",
+        "hex": "#f59a12"
+      },
+      {
+        "nom": "Indigo",
+        "hex": "#2b2f8f"
+      },
+      {
+        "nom": "Miel",
+        "hex": "#ffb84a"
+      },
+      {
+        "nom": "Lin clair",
+        "hex": "#fff1d0"
+      }
+    ],
+    "silhouette": "Tunique croisée à ourlet en biais, sur un sarouel indigo bouffant.",
+    "manches": "Manches ballon serrées par des poignets indigo.",
+    "details": "Large ceinture-écharpe nouée sur la hanche, deux pans qui pendent, babouches.",
+    "coiffe": "Turban indigo à gemme, pan retombant sur l’épaule.",
+    "tissu": {
+      "motif": "Rayures de caravane",
+      "fichier": "tissus/13-mage-du-desert.png"
+    },
+    "base_vroid": "Tunique asymétrique + pantalon large ; turban en coiffure ou accessoire.",
+    "apercu": "apercus/13-mage-du-desert.svg"
+  },
+  {
+    "numero": 14,
+    "id": "alchimiste",
+    "nom": "Blouse de l’Alchimiste",
+    "theme": "Laboratoire et potions",
+    "couleurs": [
+      {
+        "nom": "Olive",
+        "hex": "#7a8427"
+      },
+      {
+        "nom": "Cuir",
+        "hex": "#6b4226"
+      },
+      {
+        "nom": "Moutarde",
+        "hex": "#d9b23c"
+      },
+      {
+        "nom": "Vert bouteille",
+        "hex": "#565e17"
+      }
+    ],
+    "silhouette": "Blouse-manteau à carreaux descendant aux mollets, sous un tablier de cuir.",
+    "manches": "Manches retroussées au coude, gants de cuir.",
+    "details": "Bandoulière garnie de fioles, poches du tablier, foulard moutarde.",
+    "coiffe": "Chignon piqué de deux baguettes et lunettes rondes.",
+    "tissu": {
+      "motif": "Carreaux",
+      "fichier": "tissus/14-alchimiste.png"
+    },
+    "base_vroid": "Robe-chemise mi-longue + tablier (couche) ; fioles et lunettes en accessoires.",
+    "apercu": "apercus/14-alchimiste.svg"
+  },
+  {
+    "numero": 15,
+    "id": "enchanteresse-des-roses",
+    "nom": "Robe de l’Enchanteresse des Roses",
+    "theme": "Roseraie enchantée",
+    "couleurs": [
+      {
+        "nom": "Rose poudré",
+        "hex": "#f4a9c0"
+      },
+      {
+        "nom": "Rose dragée",
+        "hex": "#fbd3df"
+      },
+      {
+        "nom": "Framboise",
+        "hex": "#9b2f55"
+      },
+      {
+        "nom": "Vert tige",
+        "hex": "#5f9e54"
+      }
+    ],
+    "silhouette": "Robe de bal à quatre étages de volants festonnés, très ample.",
+    "manches": "Petites manches ballon, épaules dégagées, gants courts.",
+    "details": "Corset framboise lacé, rose au décolleté, gros nœud dans le dos.",
+    "coiffe": "Couronne de cinq roses.",
+    "tissu": {
+      "motif": "Roses",
+      "fichier": "tissus/15-enchanteresse-des-roses.png"
+    },
+    "base_vroid": "Une-pièce à jupe volumineuse (volants peints par étages) + corset par-dessus.",
+    "apercu": "apercus/15-enchanteresse-des-roses.svg"
+  },
+  {
+    "numero": 16,
+    "id": "arcaniste",
+    "nom": "Robe de l’Arcaniste",
+    "theme": "Savoir et runes",
+    "couleurs": [
+      {
+        "nom": "Violet royal",
+        "hex": "#5b21a6"
+      },
+      {
+        "nom": "Aubergine",
+        "hex": "#3c1273"
+      },
+      {
+        "nom": "Argent",
+        "hex": "#c9ced9"
+      },
+      {
+        "nom": "Mauve arcane",
+        "hex": "#c084fc"
+      }
+    ],
+    "silhouette": "Toge d’érudit longue et droite, galon d’argent.",
+    "manches": "Manches cloche bordées d’argent.",
+    "details": "Étole argentée gravée de runes, pèlerine à deux pointes, grimoire à la hanche.",
+    "coiffe": "Capuche rabattue, cercle d’argent, deux éclats flottants.",
+    "tissu": {
+      "motif": "Cercles arcaniques",
+      "fichier": "tissus/16-arcaniste.png"
+    },
+    "base_vroid": "Une-pièce longue droite + étole et pèlerine peintes sur une couche de manteau.",
+    "apercu": "apercus/16-arcaniste.svg"
+  },
+  {
+    "numero": 17,
+    "id": "sorcier-de-cour",
+    "nom": "Justaucorps du Sorcier de Cour",
+    "theme": "Palais et intrigues",
+    "couleurs": [
+      {
+        "nom": "Bordeaux",
+        "hex": "#6b1230"
+      },
+      {
+        "nom": "Or brocart",
+        "hex": "#d4a53a"
+      },
+      {
+        "nom": "Noir velours",
+        "hex": "#15131a"
+      },
+      {
+        "nom": "Dentelle",
+        "hex": "#f5efe6"
+      }
+    ],
+    "silhouette": "Justaucorps cintré à basques évasées s’arrêtant aux genoux, culotte et cuissardes.",
+    "manches": "Manches bouffantes, revers dorés et dentelle au poignet.",
+    "details": "Plastron de brocart boutonné, jabot, demi-cape noire sur une seule épaule.",
+    "coiffe": "Chapeau à large bord et double plume.",
+    "tissu": {
+      "motif": "Damas",
+      "fichier": "tissus/17-sorcier-de-cour.png"
+    },
+    "base_vroid": "Veste longue cintrée + short/culotte + bottes hautes ; demi-cape en accessoire.",
+    "apercu": "apercus/17-sorcier-de-cour.svg"
+  },
+  {
+    "numero": 18,
+    "id": "sylphe-des-vents",
+    "nom": "Robe de la Sylphe des Vents",
+    "theme": "Vent et plumes",
+    "couleurs": [
+      {
+        "nom": "Menthe",
+        "hex": "#a9ecc9"
+      },
+      {
+        "nom": "Vert d’eau",
+        "hex": "#74cfa3"
+      },
+      {
+        "nom": "Blanc nuage",
+        "hex": "#ffffff"
+      },
+      {
+        "nom": "Or pâle",
+        "hex": "#ffe9a3"
+      }
+    ],
+    "silhouette": "Robe courte en pétales superposés, jambes nues et sandales lacées.",
+    "manches": "Sans manches ; rubans blancs enroulés autour des bras.",
+    "details": "Petites ailes de plumes dans le dos, longs rubans flottants, col licou.",
+    "coiffe": "Plumes derrière les oreilles et fin cercle doré.",
+    "tissu": {
+      "motif": "Volutes de vent",
+      "fichier": "tissus/18-sylphe-des-vents.png"
+    },
+    "base_vroid": "Une-pièce courte sans manches (ourlet en pétales par transparence) ; ailes en accessoire.",
+    "apercu": "apercus/18-sylphe-des-vents.svg"
+  },
+  {
+    "numero": 19,
+    "id": "prismancien",
+    "nom": "Chasuble du Prismancien",
+    "theme": "Lumière décomposée",
+    "couleurs": [
+      {
+        "nom": "Blanc nacré",
+        "hex": "#f4f4f8"
+      },
+      {
+        "nom": "Rouge spectre",
+        "hex": "#ff5d73"
+      },
+      {
+        "nom": "Jaune spectre",
+        "hex": "#ffe14d"
+      },
+      {
+        "nom": "Cyan spectre",
+        "hex": "#3ecbe6"
+      },
+      {
+        "nom": "Violet spectre",
+        "hex": "#a26bff"
+      }
+    ],
+    "silhouette": "Chasuble triangulaire rigide, de l’épaule au sol, ourlet en pointe centrale.",
+    "manches": "Manches blanches ajustées, poignets en prisme (un cyan, un rose).",
+    "details": "Empiècement blanc, emblème du prisme d’où part un faisceau arc-en-ciel.",
+    "coiffe": "Éclats de verre colorés en éventail derrière la nuque et sur le front.",
+    "tissu": {
+      "motif": "Facettes arc-en-ciel",
+      "fichier": "tissus/19-prismancien.png"
+    },
+    "base_vroid": "Poncho / robe trapèze longue ; texture à facettes, col rigide en accessoire.",
+    "apercu": "apercus/19-prismancien.svg"
+  },
+  {
+    "numero": 20,
+    "id": "chamane-des-esprits",
+    "nom": "Poncho du Chamane des Esprits",
+    "theme": "Totems et ancêtres",
+    "couleurs": [
+      {
+        "nom": "Chocolat",
+        "hex": "#4a2c1a"
+      },
+      {
+        "nom": "Turquoise",
+        "hex": "#1fb5a8"
+      },
+      {
+        "nom": "Os",
+        "hex": "#efe6d0"
+      },
+      {
+        "nom": "Daim",
+        "hex": "#b98a57"
+      }
+    ],
+    "silhouette": "Grand poncho en pointe couvrant le buste, sur une jupe droite à franges.",
+    "manches": "Bras nus sous le poncho, bracelets de perles.",
+    "details": "Chevrons turquoise, franges de daim, collier de dents, bottes fourrées.",
+    "coiffe": "Cornes d’os, trois plumes dressées, peinture sur les joues.",
+    "tissu": {
+      "motif": "Frise totémique",
+      "fichier": "tissus/20-chamane-des-esprits.png"
+    },
+    "base_vroid": "Jupe longue + poncho (couche de manteau) ; cornes et plumes en accessoires.",
+    "apercu": "apercus/20-chamane-des-esprits.svg"
+  }
+]
