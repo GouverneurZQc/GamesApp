@@ -70,7 +70,7 @@ console.log(`total ${(total / 1048576).toFixed(1)} Mo`);
 // Page d'essayage : essayage.html (autonome) et, avec --fragment=<fichier>, la version à publier.
 const tpl = fs.readFileSync(path.join(__dirname, 'essayage.tpl.html'), 'utf8');
 const attacher = fs.readFileSync(path.join(__dirname, 'attacher-robe.js'), 'utf8').replace(/^import .*$/m, '').replace(/^export /gm, '');
-const page = (three, vrm) => tpl.replace('__DATA__', () => JSON.stringify(data)).replace('__ATTACHER__', () => attacher).split('__THREE__').join(three).replace('__VRM__', vrm).replace('__BASE__', '');
+const page = (three, vrm, b64 = false) => tpl.replace('__B64__', String(b64)).replace('__DATA__', () => JSON.stringify(data)).replace('__ATTACHER__', () => attacher).split('__THREE__').join(three).replace('__VRM__', vrm).replace('__BASE__', '');
 const CDN = ['https://cdn.jsdelivr.net/npm/three@0.160.0', 'https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@2.1.0/lib/three-vrm.module.min.js'];
 fs.writeFileSync(path.join(__dirname, 'essayage.html'), `<!doctype html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n</head>\n<body>\n${page(...CDN)}\n</body>\n</html>\n`);
-for (const a of process.argv) { if (a.startsWith('--fragment=')) fs.writeFileSync(a.slice(11), page(...CDN)); if (a.startsWith('--local=')) fs.writeFileSync(a.slice(8), '<!doctype html><meta charset="utf-8">' + page('/nm/three', '/nm/@pixiv/three-vrm/lib/three-vrm.module.js')); }
+for (const a of process.argv) { if (a.startsWith('--fragment=')) fs.writeFileSync(a.slice(11), page(...CDN, true)); if (a.startsWith('--local=')) fs.writeFileSync(a.slice(8), '<!doctype html><meta charset="utf-8">' + page('/nm/three', '/nm/@pixiv/three-vrm/lib/three-vrm.module.js')); }

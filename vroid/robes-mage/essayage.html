@@ -224,7 +224,15 @@ function retirerRobe(groupe) {
     try { chargeur.parse(buffer, '', ok, ko); } catch (e) { ko(e); } finally { try { window.createImageBitmap = cib; } catch (e) { /* idem */ } }
   });
   const tampons = new Map();
-  const telecharger = async chemin => { if (!tampons.has(chemin)) { const r = await fetch(BASE + chemin); if (!r.ok) throw new Error(chemin); tampons.set(chemin, await r.arrayBuffer()); } return tampons.get(chemin).slice(0); };
+  // Sur la page publiée, les .glb sont joints en base64 (fichiers .txt) ; ailleurs ils sont lus directement.
+  const B64 = false;
+  const telecharger = async chemin => {
+    if (!tampons.has(chemin)) {
+      const r = await fetch(BASE + chemin + (B64 ? '.txt' : '')); if (!r.ok) throw new Error(chemin);
+      tampons.set(chemin, B64 ? Uint8Array.from(atob((await r.text()).trim()), c => c.charCodeAt(0)).buffer : await r.arrayBuffer());
+    }
+    return tampons.get(chemin).slice(0);
+  };
 
   const NOMS = { hips: 'J_Bip_C_Hips', spine: 'J_Bip_C_Spine', leftUpperArm: 'J_Bip_L_UpperArm', rightUpperArm: 'J_Bip_R_UpperArm', leftLowerArm: 'J_Bip_L_LowerArm', rightLowerArm: 'J_Bip_R_LowerArm',
     leftUpperLeg: 'J_Bip_L_UpperLeg', rightUpperLeg: 'J_Bip_R_UpperLeg', leftLowerLeg: 'J_Bip_L_LowerLeg', rightLowerLeg: 'J_Bip_R_LowerLeg' };
